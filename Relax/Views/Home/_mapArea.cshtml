@@ -1,0 +1,167 @@
+﻿<link href="~/css/api.css" rel="stylesheet" />
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+<section class="container-fluid w-75">
+	<div class="row justify-content-center">
+		<!-- 側邊欄： -->
+		<div class="slidecol col-12 col-md-3 d-flex" style="height:740px; overflow: auto;padding:20px">
+			<div class="nav flex-column" style="width:100%" id="heroTab" role="tablist">
+				@* ==選擇縣市===*@
+				<div>
+					<select class="custom-select mb-3" style="width:100%">
+						<option value="none" selected disabled hidden>請選擇縣市</option>
+						<option value="value1">高雄市</option>
+						@* <option value="value2">台南市</option> *@
+						@* <option value="value3">屏東縣</option> *@
+					</select>
+				</div>
+				@* ==標籤按鈕===*@
+				<div class="mb-3" style="background-color:#fff">
+					<div id="tags-container" ref="tagsContainer"></div>
+					<div id="headingOne" style="text-align: center">
+						<button class="btn dorne-btn bg-white text-dark" style="width:100%" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+							標籤
+						</button>
+					</div>
+					<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+						<div v-for="tag in tags" style="padding:5px;display:inline-block;">
+							<button class="btn btn1" v-bind:value="tag.tagName" v-on:click="addTags($event)">{{tag.tagName}}</button>
+						</div>
+					</div>
+				</div>
+				@* ==景點間距===*@
+				<div>
+					<span id="additionalText" style="margin-right:10px">景點間距 : </span>
+					<select class="custom-select mb-3" style="width:35%" v-model="distance">
+						<option :value="none" selected disabled hidden>兩點間距離</option>
+						<option :value="5">5</option>
+						<option :value="10">10</option>
+						<option :value="15">15</option>
+						<option :value="20">20</option>
+					</select>
+					<span id="additionalText" style="margin-left:15px">公里</span>
+				</div>
+				@* ==行程天數===*@
+				<div>
+					<span id="additionalText" style="margin-right:10px">行程天數 : </span>
+					<select class="custom-select mb-3" style="width:35%" v-model="valueDay">
+						<option :value="none" selected disabled hidden>天數</option>
+						<option :value="1">1</option>
+						<option :value="2">2</option>
+						<option :value="3">3</option>
+					</select>
+					<span id="additionalText" style="margin-left:15px">天</span>
+				</div>
+				@* ==單日景點===*@
+				<div>
+					<span id="additionalText" style="margin-right:10px">單日景點 : </span>
+					<select class="custom-select mb-3" style="width:35%" v-model="selectedValue">
+						<option value="none" selected disabled hidden>一天行程數</option>
+						<option v-for="num in 6" :value="num">{{num}}</option>
+					</select>
+					<span id="additionalText" style="margin-left:15px">個</span>
+
+					
+				</div>
+				@* ==旅行模式的下拉選單== *@
+				<div>
+					<span id="additionalText" style="margin-right:10px">通勤模式 : </span>
+					<select class="custom-select mb-4" style="width:35%" id="mode" onchange="calcRoute()" v-on:change="TrvaelMode">
+						<option value="DRIVING" selected>開車</option>
+						<option value="WALKING">走路</option>
+						<option value="BICYCLING">腳踏車</option>
+						@* <option value="TRANSIT">Transit</option> *@
+					</select>
+				</div>
+				@* ==搜尋btn===*@
+				<div>
+					<button class="btn dorne-btn bg-white text-dark" style="width:100%; height:40px;line-height:0px" title="Search" aria-label="Search" v-on:click="searchTags" class="visually">
+						<!-- SVG 圖標 -->
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="14" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+						</svg>
+						<!-- 隱藏的文本，用於輔助技術 -->
+						<span class="visually-hidden"></span>
+					</button>
+				</div>
+				<br />
+				<div v-if="tagpositions2 && tagpositions2.length > 0">
+
+					<div v-for="(day,dayIndex) in tagpositions2" style="background-color: white; text-align: center;">
+						<h4 class="btn btn-link collapsed" v-on:click="dayRoute(dayIndex)" data-toggle="collapse" :data-target="'#collapsePositions' + dayIndex" aria-expanded="false" :aria-controls="'collapsePositions' + dayIndex">Day 0{{ dayIndex + 1 }}</h4>
+						<div :id="'collapsePositions' + dayIndex" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+							<h6>總共{{totalTime[dayIndex]}}小時</h6>
+							<div class="search-container">
+								<p v-for="(position, index) in tagpositions2[dayIndex]" :key="index">
+									{{String.fromCharCode(65 + index) }}景點: {{ position.positionA }}
+								</p>
+							</div>
+						</div>
+					</div>
+					@* @if (SignInManager.IsSignedIn(User))
+					{ *@
+					@*按鈕觸發模態窗口顯示*@
+					<div>
+					<button class="primary" v-on:click="showRandomModal=true" style="margin-top:20px;margin-bottom:15px; width:100%" data-hover="click me!">
+						<div>加入我的隨機行程</div>
+					</button>
+					</div>
+					@* } *@
+
+
+					@*模態窗口*@
+					<div v-if="showRandomModal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-labelledby="RandomModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="RandomModalLabel">輸入行程名稱</h5>
+								</div>
+								<div class="modal-body">
+									<div class="form-group">
+										<label for="myRandName" style="font-size: 20px; font-weight: bold;">輸入行程名稱</label>
+										<input type="text" class="form-control" id="myRandName" v-model="myRandName" placeholder="行程名稱">
+									</div>
+									<div v-if="message" class="alert" :class="{'alert-success': success, 'alert-danger': !success}">
+										{{ message }}
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" v-on:click="showRandomModal = false">關閉</button>
+									<button type="button" class="btn btn-primary" v-on:click="addMyRandom">儲存</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<!-- 左邊View -->
+		<div class="rightcol col-12 col-md-9">
+			<div>
+
+				
+				
+
+				<!-- 地圖容器 -->
+				<div id="map" style="width: 100%; height: 740px;"></div>
+
+			</div>
+		</div>
+	</div>
+</section>
+@* @section Scripts {
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+	<!-- Popper.js -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+
+	<!-- Bootstrap JS -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+} *@
+
+
+
+
+

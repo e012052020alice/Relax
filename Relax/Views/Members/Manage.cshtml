@@ -1,0 +1,322 @@
+﻿@using Relax.DTO
+@model ManageDTO
+
+@section Styles {
+	<style>
+
+		.modal-dialog {
+			display: flex;
+			align-items: center;
+			min-height: calc(100% - 3.5rem); /* 假設瀏覽器窗口高度至少大於 modal 高度加上一些額外空間 */
+		}
+
+		.section-padding-50-50 {
+			padding-top: 50px;
+			padding-bottom: 50px;
+		}
+
+		.statusMessage {
+			font-size: 24px;
+			color: #FF0000;
+			line-height: 1.3;
+		}
+
+		.manageInput {
+			width: 100%;
+			color: #fff;
+			background-color: transparent;
+			border-color: #fff;
+			border: none;
+			border-bottom: 1px solid #fff;
+			height: 50px
+		}
+
+		.manageLabel {
+			/* font-weight: 600; */
+			font-size: 18px;
+			color: #fff;
+		}
+
+		i{
+			font-style: normal;
+		}
+			.manageLabel i:hover {
+				color: #5d25dd;
+				font-style: normal;
+			}
+
+		.inputWithin {
+			position: relative;
+			display: inline-block;
+		}
+
+		.underLineStyle {
+			outline: none;
+		}
+
+		input::placeholder {
+			font-size: 14px;
+			color: #bfbfbf /* 设置占位符文本的颜色 */
+		}
+
+		.inputPaddingRight {
+			padding-right: 66px;
+		}
+
+		.inputWithin a { /*右邊圖示*/
+			color: #fff;
+			position: absolute;
+			right: 35px;
+			bottom: 12px;
+		}
+
+			.inputWithin a:last-child { /*右邊圖示*/
+				color: #fff;
+				position: absolute;
+				right: 15px;
+				bottom: 12px;
+			}
+
+			.inputWithin a:hover {
+				color: #5d25dd;
+			}
+
+		.manageSpan {
+			width: 30px;
+			height: 2px;
+			background-color: #fff;
+			margin: 0 auto 15px;
+			display: block;
+		}
+		.bg-white{
+			min-width: 120px;
+			margin-right:15px;
+			margin-left:15px;
+		} 
+	</style>
+}
+<div id="appMember">
+	<div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg);">
+	</div>
+	<section class="dorne-features-events-area bg-img bg-overlay-9 section-padding-50-50 wow fadeInDown" style="background-image: url(/relax/img/bg-img/hero-3.jpg);background-repeat: repeat-y;">
+		<div class="container-fluid w-75">
+			<div class="row h-100 justify-content-center ">
+				<div class="col-12 col-sm-6 ">
+					<div class="book-a-table-widget" style="background: rgba(67, 25, 161, 0.45)">
+						<label class="statusMessage" v-if="statusMessage">{{statusMessage}}</label>
+						<div class="row mt-3">
+							@* 帳號*@
+							<div class="col-6">
+								<label class="manageLabel">帳號</label>
+								<input class="manageInput" v-model="userName" disabled="disabled" />
+							</div>
+							@* 暱稱 *@
+							<div class="col-6 inputWithin">
+								<label class="manageLabel">暱稱</label>
+								<input class="manageInput inputPaddingRight" v-model="name" @@focus="focusName = true" />
+								<template v-if="focusName">
+									<a href="javascript:void(0);" @@click="updateName"><i class="fa fa-check" aria-hidden="true"></i></a>
+									<a href="javascript:void(0);" @@click="cancelName"><i class="fa fa-times" aria-hidden="true"></i></a>
+								</template>
+							</div>
+						</div>
+						<div class="row mt-3">
+							@*性別*@
+							<div class="col-6">
+								<label class="manageLabel">性別</label>
+								<input class="manageInput" v-model="gender" disabled="disabled" />
+							</div>
+							@*生日*@
+							<div class="col-6">
+								<label class="manageLabel">生日</label>
+								<input class="manageInput" v-model="birthDay" disabled="disabled" />
+							</div>
+						</div>
+						@* 電子郵件 *@
+						<div class="row mt-3">
+							<div class="col-12 inputWithin">
+								<label class="manageLabel">電子郵件</label>
+								<input class="manageInput inputPaddingRight" v-model="email" @@focus="focusEmail=true" />
+								<template v-if="focusEmail">
+									<a href="javascript:void(0);" @@click="updateEmail"><i class="fa fa-check" aria-hidden="true"></i></a>
+									<a href="javascript:void(0);" @@click="cancelEmail"><i class="fa fa-times" aria-hidden="true"></i></a>
+								</template>
+							</div>
+						</div>
+						<div class="row mt-5 justify-content-center">
+							<div class="col-12 col-sm-8 text-center">
+								<a href="javascript:void(0);" @@click="modalPassword" class="manageLabel"><i aria-hidden="true">修改密碼</i></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="book-a-table-widget" style="background: rgba(67, 25, 161)">
+					<div class="row justify-content-center">
+						<label class="statusMessage" v-if="passwordMessage">{{passwordMessage}}</label>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-9 text-center">
+							<label class="manageLabel">修改密碼</label>
+							<input class="manageInput inputPaddingRight" @@click="focusPassword=true" type="password" v-model="oldPassword" placeholder="請輸入舊密碼" />
+							<input class="manageInput inputPaddingRight" @@click="focusPassword=true" type="password" v-model="newPassword" placeholder="新密碼需有英文及數字並大於六個字元" />
+							<input class="manageInput inputPaddingRight" @@click="focusPassword=true" type="password" v-model="confirmPassword" placeholder="請確認密碼" />
+						</div>
+					</div>
+					<div class="row justify-content-center mt-3">
+						<button type="button" class="btn dorne-btn bg-white text-dark" @@click="cancelPassword">取消修改</button>
+						<button type="button" class="btn dorne-btn bg-white text-dark" @@click="upPassword">修改密碼</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	@* Vue *@
+	<script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+	@* ajax *@
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<script>
+		var baseAddress = "https://localhost:7238";
+		var vueApp = {
+			data() {
+				return {
+					statusMessage: "",
+					passwordMessage:"",
+					userId: "",
+					userName: "",
+					name: "",
+					originalName: "",
+					focusName: false,
+					email: "",
+					originalEmail: "",
+					focusEmail: false,
+					gender: "",
+					birthDay: null,
+					focusPassword: false,
+					oldPassword: "",
+					newPassword: "",
+					confirmPassword: "",
+
+				}
+			},
+			methods: {
+				showDTO: function () {
+					let _this = this;
+					axios.get(`${baseAddress}/api/Users/GetManage`)
+						.then(response => {
+							const Array = response.data;
+							for (var i = 0; i < Array.length; i++) {
+								_this.userId = Array[i].id;
+								_this.userName = Array[i].userName;
+								_this.name = Array[i].name;
+								_this.originalName = Array[i].name;
+								_this.email = Array[i].email;
+								_this.originalEmail = Array[i].email;
+								_this.gender = Array[i].gender;
+								_this.birthDay = Array[i].birthDay;
+							}
+						})
+						.catch(err => {
+							alert(err);
+						});
+				},
+				updateName: function () {
+					let _this = this;
+
+					var myName = {
+						id: _this.userId,
+						name: _this.name,
+					};
+					axios.post(`${baseAddress}/api/Users/PostName`, myName)
+						.then(response => {
+							_this.statusMessage = response.data;
+
+							if (response.data === "修改成功") {
+								_this.focusName = false;
+								_this.showDTO();
+							}
+						})
+						.catch(err => {
+							alert(err);
+						});
+				},
+				cancelName: function () {
+					let _this = this;
+					_this.name = _this.originalName;
+					_this.focusName = false;
+				},
+				updateEmail: function () {
+					let _this = this;
+
+					var myEmail = {
+						id: _this.userId,
+						newEmail: _this.email,
+					};
+					axios.post(`${baseAddress}/api/Users/PostEmail`, myEmail)
+						.then(response => {
+							_this.statusMessage = response.data;
+
+							if (response.data === "您的電子郵件已變更。") {
+								_this.focusEmail = false;
+								_this.showDTO();
+							}
+						})
+						.catch(err => {
+							alert(err);
+						});
+				},
+				cancelEmail: function () {
+					let _this = this;
+					_this.email = _this.originalEmail;
+					_this.focusEmail = false;
+				},
+				modalPassword: function () {
+					let _this = this;
+					_this.oldPassword = "";
+					_this.newPassword = "";
+					_this.confirmPassword = "";
+					$("#passwordModal").modal("show");
+				},
+				cancelPassword: function () {
+					$("#passwordModal").modal("hide");
+				},
+				upPassword: function () {
+					let _this = this;
+
+					var myPassword = {
+						oldPassword: _this.oldPassword,
+						newPassword: _this.newPassword,
+						confirmPassword: _this.confirmPassword
+					};
+					console.log(myPassword);
+					axios.post(`${baseAddress}/api/Users/PostPassword`, myPassword)
+						.then(response => {
+							_this.passwordMessage = response.data;
+							if (response.data === "修改成功") {
+								$("#passwordModal").modal("hide");
+								_this.showDTO();
+							}
+						})
+						.catch(err => {
+							alert(err);
+						});
+				},
+			},
+			mounted: function () {
+				let _this = this;
+				_this.showDTO();
+			}
+		}
+		var app = Vue.createApp(vueApp).mount("#appMember");
+	</script>
+}

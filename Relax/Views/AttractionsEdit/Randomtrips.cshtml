@@ -1,0 +1,96 @@
+﻿@section Styles {
+	<link href="~/css/attractions.css" rel="stylesheet" />
+}
+<div id="app">
+	@****** Breadcumb Area Start ******@
+	<div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg);">
+	</div>
+	@****** Breadcumb Area End ******@
+	<section class="addattractions-area" style="background-image: url(/relax/img/bg-img/hero-3.jpg)">
+		<div class="container-fluid w-75">
+			<div class="container">
+				<div class="row edittrips-notrip" v-if="trips.length === 0">
+					<h3>尚未有隨機行程, </h3>
+					<a href="/" class="generate-link">馬上去產生隨機行程</a>
+				</div>
+				<div class="row" v-else>
+					<div class="col-12">
+						<div v-for="(item, index) in groupedTrips" :key="index">
+							<div class="card">
+								<div class="card-header addtrips-btn-area" :data-toggle="'#collapse-' + index" :aria-expanded="activeTrip === index ? 'true' : 'false'" @@click="activeTrip = (activeTrip === index ? null : index)">
+									<h4 style="color:#fff;margin:1rem 0px">{{ item[0].randomName }}</h4>
+									<button type="button" class="btn edittrips-btn-danger" @@click="confirmDeleteItinerary(item[0].randomName)">刪除行程</button>
+								</div>
+								<div class="card-body">
+									<div :id="'collapse-' + index" class="collapse" :class="{ 'show': activeTrip === index }">
+									<div v-for="(day, dayIndex) in item" :key="dayIndex">
+										<div>
+											<h5 style="color:#fff;margin:1rem 0px">第{{ dayIndex + 1 }}天路線規劃↓↓↓</h5>
+										</div>
+										<a :href="day.googleMapResultLink" target="_blank">點擊這裡查看地圖</a>
+										<hr>
+									</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+
+@section Scripts {
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+	<script>
+		var vueApp = {
+			data() {
+				return {
+					trips: [],
+					activeTrip: null,
+				};
+			},
+			computed: {
+				groupedTrips() {
+					const grouped = {};
+					this.trips.forEach(trip => {
+						if (!grouped[trip.randomName]) {
+							grouped[trip.randomName] = [];
+						}
+						grouped[trip.randomName].push(trip);
+					});
+					return Object.values(grouped);
+				}
+			},
+			methods: {
+				confirmDeleteItinerary(randomName) {
+					if (confirm("你確定要刪除此行程嗎？")) {
+						this.deleteItinerary(randomName);
+					}
+				},
+				deleteItinerary(randomName) {
+					axios.delete('https://localhost:7238/DeleteRandomTrips/' + randomName)
+						.then(response => {
+							this.trips = this.trips.filter(trip => trip.randomName !== randomName);
+						})
+						.catch(error => {
+							console.error("Failed to delete the trip:", error);
+						});
+				}
+			},
+			mounted() {
+				axios.get('https://localhost:7238/GetRandomTrips')
+					.then(response => {
+						this.trips = response.data;
+					})
+					.catch(error => {
+						console.error("There was an error fetching the trips:", error);
+					});
+			},
+		};
+
+		const app = Vue.createApp(vueApp).mount('#app');
+	</script>
+}

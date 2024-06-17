@@ -1,0 +1,572 @@
+﻿@section Styles {
+    @* <link href="~/css/api.css" rel="stylesheet" /> *@
+    <link href="~/css/adhome.css" rel="stylesheet" />
+    <style>
+        .section-padding-50 {
+            padding-top: 50px;
+            padding-bottom: 50px;
+        }
+    </style>
+}
+
+<div id="appHome">
+    @* ***** 隨機旅遊開始 *****  *@
+    <section class="dorne-welcome-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg);">
+        <div class="container-fluid w-75">
+            <div class="row h-100 align-items-center justify-content-center" style=" padding-top:160px">
+                <partial name="_mapArea" /> 
+            </div>
+        </div>
+    </section>
+    @* *****  隨機旅遊結束 ***** *@
+
+    @* ***** About Area Start ***** *@
+    <section class="dorne-about-area section-padding-50">
+        <partial name="_aboutArea" />
+    </section>
+    @* ***** About Area End ***** *@
+
+    @* ***** 活動展示區開始 ***** *@
+    <section class="dorne-editors-pick-area bg-img bg-overlay-9 section-padding-100" style="background-image: url(/relax/img/bg-img/hero-2.jpg);">
+        <partial name="_activityArea" />
+    </section>
+    @* ***** 活動展示區結束 ***** *@
+
+    @* ***** 活動互動視窗開始 ***** *@
+    <partial name="_modal" /> 
+    @* ***** 活動互動視窗結束 ***** *@
+
+    @* ***** 住宿推薦開始 ***** *@
+    <section class="dorne-features-destinations-area">
+        <partial name="_hostelArea" />
+    </section>
+    @* ***** 住宿推薦結束 ***** *@
+
+    @* ***** Features Restaurant Area Start ***** *@
+    @* <section class="dorne-features-restaurant-area bg-default">
+    <partial name="_restaurantArea" />
+    </section> *@
+    @* ***** Features Restaurant Area End ***** *@
+
+    @* ***** 行程推薦開始 ***** *@
+    <section class="dorne-features-events-area bg-img bg-overlay-9 section-padding-100-50" style="background-image: url(/relax/img/bg-img/hero-3.jpg)">
+        <partial name="_tripArea" />
+    </section>
+    @* ***** 行程推薦結束 ***** *@
+
+    @* ***** Clients Area Start ***** *@
+    @* <div class="dorne-clients-area section-padding-100">
+    <partial name="_clientsArea" />
+    </div> *@
+    @* ***** Clients Area End ***** *@
+</div>
+
+@section Scripts {
+    @* Vue *@
+    <script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+    @* ajax *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @* map api *@
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=myApiKey&callback=initMap">
+    </script>
+    <script>
+        //=============================================MAP Start=================================================================
+        var directionsService;
+        var directionsRenderer;
+        var points = [];
+        var tagpositions;
+        var selectedMode = " DRIVING";
+        // 初始化地圖
+        function initMap() {
+            // 初始化 DirectionsService 和 DirectionsRenderer
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+
+            // 定義三個景點的經緯度座標
+            point1 = new google.maps.LatLng(22.6208746, 120.280509); // 第一個景點 : 駁二藝術特區
+            point2 = new google.maps.LatLng(22.6198442, 120.2847017); // 第二個景點 : 高雄流行音樂中心
+            point3 = new google.maps.LatLng(22.61875850446501, 120.29203981130068); // 第三個景點：高雄流行音樂中心 珊瑚礁群
+
+            // 設定地圖的初始參數
+            var mapOptions = {
+                zoom: 14, // 初始縮放級別
+                center: point1, // 初始中心位置設定為第一個景點
+                scrollwheel: true
+            };
+
+            // 創建地圖
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            directionsRenderer.setMap(map); // 將 DirectionsRenderer 與地圖關聯
+
+            // 顯示地圖資訊
+            //displayLocationInfo();
+        }
+
+        // 計算並顯示路線
+        function calcRoute() {
+            // 獲取使用者選擇的旅行模式
+            selectedMode = document.getElementById('mode').value;
+
+            // 設定路線規劃的請求
+            var waypoints = [];
+            for (let i = 1; i < points.length - 1; i++) {
+                waypoints.push({
+                    location: points[i],
+                    stopover: true
+                });
+            }
+            var request = {
+                origin: points[0], // 設定起點為第一個景點
+                destination: points[points.length - 1], // 設定終點為第三個景點
+                //waypoints: [{ location: point2 }], // 加入第二個景點作為途經點
+                waypoints: waypoints, // 加入第二個景點作為途經點
+                travelMode: google.maps.TravelMode[selectedMode] // 設定旅行模式
+                // travelMode: google.maps.TravelMode["DRIVING"] // 設定旅行模式
+            };
+
+            // 請求路線規劃
+            directionsService.route(request, function (response, status) {
+                if (status == 'OK') {
+                    directionsRenderer.setDirections(response); // 將路線顯示在地圖上
+                }
+            });
+        }
+
+        // 轉換座標為地點資訊並顯示
+        function displayLocationInfo() {
+            var pointsCoords = [];
+            points.forEach(function (onepoint) {
+                pointsCoords.push(onepoint);
+            });
+            var geocoder = new google.maps.Geocoder();
+            for (let i = 0; i < pointsCoords.length; i++) {
+                geocoder.geocode({ location: pointsCoords[i] }, function (results, status) {
+                    if (status === 'OK') {
+                        document.getElementById('point').textContent = `第${i + 1}個景點+${tagpositions[i].positionA}`;
+                    }
+                });
+            }
+        }
+
+        function tagsRoute(day) {
+            points = [];
+            for (var i = 0; i < tagpositions[day].length; i++) {//tagpositions.length-1:response.data(包含總共時間)
+                points[i] = new google.maps.LatLng(tagpositions[day][i].ay, tagpositions[day][i].ax);
+            }
+            calcRoute();
+        }
+        function total(selectTravel) {
+            let service = new google.maps.DistanceMatrixService();
+            var travelTotalTime = [];
+            let destinations = [];
+            for (var i = 0; i < tagpositions.length; i++) {
+                let destinationsRow = [];
+                for (var j = 1; j < tagpositions[i].length; j++) {
+                    destinationsRow.push({
+                        lat: tagpositions[i][j].ay,
+                        lng: tagpositions[i][j].ax
+                    });
+                }
+                destinations.push(destinationsRow);
+
+            }
+
+            let promises = [];
+            for (var i = 0; i < tagpositions.length; i++) {
+                let promise = new Promise((resolve, reject) => {
+                    service.getDistanceMatrix(
+                        {
+                            origins: [{ lat: tagpositions[i][0].ay, lng: tagpositions[i][0].ax }],
+                            destinations: destinations[i],
+                            travelMode: google.maps.TravelMode[selectTravel],
+                            unitSystem: google.maps.UnitSystem.METRIC,
+                        }, function (response, status) {
+                            if (status !== google.maps.DistanceMatrixStatus.OK) {
+                                window.alert('Error was' + status);
+                            } else {
+                                console.log(response);
+                                console.log(response["rows"][0]["elements"][0]["duration"]["text"]);
+                                var oneDayTime = 0;
+                                for (var j = 0; j < response["rows"][0]["elements"].length; j++) {
+                                    let durationText = response["rows"][0]["elements"][j]["duration"]["text"];
+                                    let hours = 0, minutes = 0;
+                                    let hoursMatch = durationText.match(/(\d+)\s*小時/);
+                                    let minuteMatch = durationText.match(/(\d+)\s*分鐘/);
+                                    if (hoursMatch) {
+                                        hours = parseInt(hoursMatch[1]);
+                                    }
+                                    if (minuteMatch) {
+                                        minutes = parseInt(minuteMatch[1]);
+                                    }
+                                    oneDayTime += (hours * 60) + minutes;
+                                }
+                                travelTotalTime.push(oneDayTime);
+                                // console.log(travelTotalTime);
+                                resolve();
+                            }
+                        });
+                });
+                promises.push(promise);
+            }
+            return Promise.all(promises).then(() => {
+                return travelTotalTime;
+            }).catch((error) => {
+                console.log(error);
+            });
+            // return travelTotalTime;
+        }
+        //=============================================MAP End============================================================
+
+    </script>
+    <script>
+        var baseAddress = "https://localhost:7238";
+        var vueApp = {
+            data() {
+                return {
+                    //map
+                    isSearch:false,
+                    distance: 5,//兩點間的距離
+                    valueDay: 1,//天數
+                    selectedValue: 1,//1天行程數
+                    tagpositions2: [],
+                    tags: [],//資料庫Tags
+                    selectedtags: [],//選取的按鈕
+                    photoUrl: null,
+                    hotelArray: [],
+                    hotelArray2: [],
+                    randomkey: 0,
+                    myRandName: '', //行程名稱
+                    showRandomModal: false,
+                    stayTime: [],
+                    totalTime: [],
+                    drivingTotalTime: [],
+                    walkingTotalTime: [],
+                    bicyclingTotalTime: [],
+                    selectTravelMode: '',
+                    apiKey: "myApiKey",
+                    success: false,
+                    message: '',
+
+                    
+
+                    //tripArea
+                    ADTripArray: [],
+                    UserArray: [],
+                    ADTripShow: [],
+                    ADTripDetail: [],
+                    //tripModal
+                    detailName: "",
+                    DetailDay: [],
+                    DayNumber: "",
+                    detailDayNumber: [],
+                    isLove: false,
+                    loginUser:"",
+
+                    //acModal
+                    hiddenArray: [],
+                    acGoArray: [],
+                    acGoLength:0,
+
+                };
+            },
+            computed: {
+                loveClass() {
+                    return this.isLove ? 'fa fa-heart' : 'fa fa-heart-o';
+                }
+            },
+            methods: {
+                //=========map start=================
+                searchNearby(lodginglat, lodginglng) {
+                    let _this = this;
+                    var request = {
+                        location: `${lodginglat},${lodginglng}`,
+                        key: this.apiKey
+                    };
+                    const url = `${baseAddress}/Home/GetLodging`;
+                    const queryString = new URLSearchParams(request).toString();
+                    const fullUrl = `${url}?${queryString}`;
+                    axios.get(fullUrl).then(response => {
+                        Data = JSON.parse(response.data);
+                        console.log(Data);
+                        _this.hotelArray = [];
+                        _this.hotelArray.push(Data.results);
+                        var ii = _this.hotelArray[0].slice(0, 5);
+                        _this.hotelArray2 = [];
+                        _this.hotelArray2 = ii;
+                        // _this.randomkey = Math.random();
+                        // console.log(_this.hotelArray2);
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                },
+                getPhotoUrl(photoUrl) {
+                    return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoUrl}&key=${this.apiKey}`;
+                },
+                getTags() {
+                    var url = `${baseAddress}/Home/GetTags`;
+                    axios.get(url).then(response => {
+                        this.tags = response.data;
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                },
+                addTags() {
+                    //把點選按鈕的value放入selectedtags
+                    var tagValue = event.target.value;
+                    this.selectedtags.push(tagValue);
+                    //被點擊的按鈕設定
+                    const clickedButton = event.target;
+                    clickedButton.disabled = true;
+                    clickedButton.style.backgroundColor = "#7643ea";
+                    this.renderTags();
+                },
+                renderTags() {
+                    let _this = this;
+                    var tagsContainer = _this.$refs.tagsContainer;
+                    tagsContainer.innerHTML = '';
+                    //生成被點選的按鈕,放進ref="tagsContainer"
+                    _this.selectedtags.forEach(function (tag) {
+                        var tagElement = document.createElement('div');
+                        tagElement.classList.add('tag');
+                        tagElement.textContent = tag;
+                        //添加刪除按鈕
+                        var deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'x';
+                        deleteButton.classList.add('delete-button');
+                        deleteButton.addEventListener('click', () => {
+                            var index = _this.selectedtags.indexOf(tag);
+                            if (index != -1) {
+                                _this.selectedtags.splice(index, 1);
+                                // 找到對應的.btn1按鈕
+                                var correspondingButton = document.querySelector('.btn1[value="' + tag + '"]');
+                                correspondingButton.disabled = false;
+                                correspondingButton.style.backgroundColor = "transparent";
+                                tagsContainer.removeChild(tagElement);
+                            }
+                        });
+                        // 將刪除按鈕添加到tag元素中
+                        tagElement.appendChild(deleteButton);
+                        // 將tag元素添加到tags容器中
+                        tagsContainer.appendChild(tagElement);
+                    });
+                },
+                searchTags() {
+                    var url = `${baseAddress}/Home/SearchTags`;
+                    var request = {
+                        selectedtags: this.selectedtags,
+                        distance: this.distance,
+                        valueDay: this.valueDay,
+                        numbers: this.selectedValue
+                    };
+                    axios.post(url, request).then(response => {
+                        this.isSearch = true;
+                        var allPositions = response.data;
+                        this.tagpositions2 = [];
+                        this.totalTime = [];
+                        this.stayTime = [];
+                        this.stayTime = [];
+                        for (var i = 0; i < allPositions.length; i++) {
+                            this.tagpositions2.push(allPositions[i].value);
+                            this.stayTime.push(this.tagpositions2[i][this.tagpositions2[i].length - 1]);
+                            this.tagpositions2[i].pop();
+                        }
+                        tagpositions = this.tagpositions2;
+                        this.searchNearby(this.tagpositions2[0][this.tagpositions2[0].length - 1].ay, this.tagpositions2[0][this.tagpositions2[0].length - 1].ax);
+                        tagsRoute(0);
+                        this.TrvaelMode();
+                    }).catch(err => {
+                        console.log(err);
+                    });
+                },
+                dayRoute(day) {
+                    tagsRoute(day);
+                    this.searchNearby(this.tagpositions2[day][this.tagpositions2[day].length - 1].ay, this.tagpositions2[day][this.tagpositions2[day].length - 1].ax);
+                },
+                TrvaelMode() {
+                    if (this.selectedValue === 1) {
+                        var onedayStayTime = [];
+                        this.stayTime.forEach(item => {
+                            onedayStayTime.push((item / 60).toFixed(2));
+                        });
+                        this.totalTime = onedayStayTime;
+                    }
+                    else {
+                        if (selectedMode === "DRIVING") {
+
+                            total("DRIVING").then((items) => {
+                                console.log(items);
+                                this.drivingTotalTime = items.map((drivingTime, index) => {
+                                    drivingTime += this.stayTime[index];
+                                    return (drivingTime / 60).toFixed(2);
+                                });
+                                this.totalTime = this.drivingTotalTime;
+                            });
+                        }
+                        else if (selectedMode === "WALKING") {
+                            total("WALKING").then((items) => {
+                                this.walkingTotalTime = items.map((walkingTime, index) => {
+                                    walkingTime += this.stayTime[index];
+                                    return (walkingTime / 60).toFixed(2);
+                                });
+                                this.totalTime = this.walkingTotalTime;
+                            });
+
+                        }
+                        else {
+                            total("BICYCLING").then((items) => {
+                                this.bicyclingTotalTime = items.map((bicyclingTime, index) => {
+                                    bicyclingTime += this.stayTime[index];
+                                    return (bicyclingTime / 60).toFixed(2);
+                                });
+                                this.totalTime = this.bicyclingTotalTime;
+                            });
+                        }
+                    }
+
+                },
+                addMyRandom() {
+                    // this.getlogin();
+                    // console.log(this.loginUser);
+                    var url = `${baseAddress}/Home/GoogleMapUrl`;
+                    var locations = [];
+                    for (var i = 0; i < this.tagpositions2.length; i++) {
+                        var tempArray = [];
+                        for (var j = 0; j < this.tagpositions2[i].length; j++) {
+                            tempArray.push({
+                                positionA: this.tagpositions2[i][j].positionA,
+                            });
+                        }
+                        locations.push(tempArray);
+                    }
+                    var request = {
+                        RandName: this.myRandName,
+                        locations: locations // 位置數據
+                    };
+                    axios.post(url, request).then(response => {
+                        console.log(response.data);
+                        this.success = true; // 設置成功樣式
+                        this.message = '已成功加入'; // 設置成功消息
+                    }).catch(err => {
+                        this.success = false; // 設置失敗樣式
+                        this.message = '失敗'; // 設置失敗消息
+                        console.log(err);
+                    });
+                },
+
+                resetMessage() {
+                    this.success = false;
+                    this.message = '';
+                },
+
+                resetMessage() {
+                    this.success = false;
+                    this.message = '';
+                // 在打開彈出視窗時清空行程名稱
+                
+                },
+                //=========map end=================
+                showDTO: function () {
+                    let _this = this;
+
+                    axios.get(`${baseAddress}/api/ADTrip`)
+                        .then(response => {
+
+                            _this.ADTripShow = response.data;
+ 
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                getlogin: function () {
+                    let _this = this;
+                    axios.post(`${baseAddress}/api/ADTrip/User`)
+                        .then(response => {
+                            console.log(response);
+                            _this.loginUser = response.data;
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                showADTModal: function (tripId, tripName, tripImg) {
+
+                    let _this = this;
+                    $("#ADTimgModal").css("background-image", "url('" + tripImg + "')");
+                    _this.detailName = tripName;
+
+                    axios.get(`${baseAddress}/api/ADTrip/Detail?tripId=${tripId}`)
+                        .then(response => {
+                            _this.ADTripDetail = response.data;
+
+                            // 使用 Set 来确保 dayNumber 的唯一性
+                            const uniqueDays = new Set();
+                            _this.detailDayNumber = [];
+                            _this.ADTripDetail.forEach(detail => {
+                                if (!uniqueDays.has(detail.dayNumber)) {
+                                    uniqueDays.add(detail.dayNumber);
+                                    _this.detailDayNumber.push(detail);
+                                }
+                            });
+
+                            _this.DayNumber = 1;
+                            _this.DetailDay = _this.ADTripDetail.filter(detail => detail.dayNumber === 1);
+
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+
+                    $("#ADTModal").modal("show");
+                },
+                changePage(day) {
+                    let _this = this;
+                    event.preventDefault();
+                    _this.DayNumber = day;
+                    _this.DetailDay = _this.ADTripDetail.filter(detail => detail.dayNumber === day);
+                },
+                showACModal: function () {
+                    let _this = this;
+                    axios.get(`${baseAddress}/api/Active/Go`)
+                        .then(response => {
+                            _this.acGoArray = response.data;
+                            _this.acGoLength = _this.acGoArray.length;
+
+                            if (_this.acGoLength > 0) {
+                                $("#ACModal").modal("show");
+                            }
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });                 
+                },
+                changeLove() {
+                    let _this = this;
+                    _this.isLove = !_this.isLove;
+                    _this.getlogin();                   
+                }
+            },
+            mounted: function () {
+                let _this = this;
+                _this.getTags();
+                // _this.searchNearby(22.669716027449518, 120.30233334390414);
+                _this.showDTO();
+                _this.showACModal();
+            }
+        };
+        var app = Vue.createApp(vueApp).mount("#appHome");
+    </script>
+}
+
+@* <style>
+    <script >
+    document.addEventListener("DOMContentLoaded", function () {
+    const select = document.getElementById("mySelect");
+    const additionalText = document.getElementById("additionalText");
+
+    // 在select元素後面插入附加文字
+    select.insertAdjacentElement("afterend", additionalText);
+    });
+    </script >
+    </style> *@

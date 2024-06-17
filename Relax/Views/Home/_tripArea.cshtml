@@ -1,0 +1,32 @@
+﻿
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="section-heading text-center">
+                <span></span>
+                <h4>行程分享</h4>
+                <p>Enjoy your trip</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-lg-6" v-for="ADT in ADTripShow">
+            <div class="single-feature-events-area d-sm-flex align-items-center wow fadeInUpBig" data-wow-delay="0.2s">
+                <div class="feature-events-thumb">
+                    <img v-bind:src="ADT.adImg" alt="" class="tripImg">
+                    <div class="date-map-area d-flex">
+                        <a>{{ADT.totalDays}} days</a>
+                    </div>
+                </div>
+                <div class="feature-events-content">
+                    <h5>{{ADT.tripName}}</h5>
+                    <h6>{{ADT.name}}</h6>
+                    <p class="adtDetailtext">{{ADT.detail}}</p>
+                </div>
+                <div class="feature-events-details-btn">
+                    <a href="javascript:void(0);" @@click="showADTModal(ADT.tripId,ADT.tripName,ADT.adImg)">...<i aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

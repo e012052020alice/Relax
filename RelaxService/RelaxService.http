@@ -1,0 +1,6 @@
+@RelaxService_HostAddress = http://localhost:5148
+
+GET {{RelaxService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

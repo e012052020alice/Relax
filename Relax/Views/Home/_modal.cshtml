@@ -1,0 +1,95 @@
+﻿<div class="modal fade " id="ACModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center" role="document">
+            <div class="modal-content bg-overlay-9" style="background-image: url(/relax/img/bg-img/hero-2.jpg)">
+                <div class="modal-header">
+                    <h5 class="modal-title">活動快訊</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="moadl-text">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <template v-if="acGoLength==1">
+                        <div class="col-12 mb-5" style="width: auto; height: 400px;" v-for="acgo in acGoArray">
+                            <img v-bind:src="acgo.image" alt="" class="acImg">
+                            <div class="editors-pick-info">
+                                <div class="places-total-destinations ">
+                                    <a href="#">{{acgo.title}}</a>
+                                    <a href="#">{{acgo.detail}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="acGoLength==2">
+                        <div class="col-12 mb-5"  v-for="acgo in acGoArray">
+                            <img v-bind:src="acgo.image" alt="" class="acImg">
+                            <div class="editors-pick-info">
+                                <div class="places-total-destinations ">
+                                    <a href="#">{{acgo.title}}</a>
+                                    <a href="#">{{acgo.detail}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="acGoLength==3">
+                        <div class="col-12 mb-5" v-for="acgo in acGoArray">
+                            <img v-bind:src="acgo.image" alt="" class="acImg" style="max-height: 200px;">
+                            <div class="editors-pick-info">
+                                <div class="places-total-destinations ">
+                                    <a href="#" class="text-center">{{acgo.title}}</a>
+                                    <a href="#" class="text-center">{{acgo.detail}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ADTModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center" role="document">
+            <div class="modal-content">
+
+                <div id="ADTimgModal" class="modal-header bg-img bg-overlay" style="height:150px;width:100%;object-fit: cover;">
+
+                    <h5 class="modal-title">{{detailName}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid justify-content-center">
+                        <h5 class="form-label">第{{DayNumber}}天</h5>
+                        <div v-for="Detail in DetailDay" class="feature-events-content mb-3 adtDetaildiv">
+                            <hr />
+                            <h5 class="form-label">行程{{Detail.dailyNumber}} {{ Detail.attractionName }}</h5>
+                            <h6 class="form-label">時段: {{ Detail.timeCategory }}</h6>
+                            <h6 class="form-label">預計停留時間: {{ Detail.stayTime }} 分鐘</h6>
+                            <p class="form-label">{{ Detail.description }}</p>
+                            <p class="form-label">tag: {{ Detail.tag }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row modal-footer">
+                    <div class="container-fluid">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center" >
+                                <li class="page-item" v-for="Detail in detailDayNumber">
+                                    <a class="page-link" href="#" @@click="changePage(Detail.dayNumber)">{{ Detail.dayNumber }}</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="row container-fluid justify-content-center ">
+                        <button type="button" class="btn dorne-btn m-3" data-dismiss="modal">確定</button>
+                        <button type="button" class="btn dorne-btn m-3" @@click="changeLove">
+                            <i :class="loveClass" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

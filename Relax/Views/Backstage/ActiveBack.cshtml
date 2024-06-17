@@ -1,0 +1,490 @@
+﻿@section Styles {
+    <style>
+
+        .acImg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .col-4 .editors-pick-info .places-total-destinations > a, .editors-pick-info .add-more > a {
+            width: 230px;
+            height: 45px;
+            line-height: 45px;
+            background-color: rgba(67, 25, 161, 0.85);
+        }
+
+            .col-4 .editors-pick-info .places-total-destinations > a:last-child {
+                background-color: rgba(42, 42, 42, 0.85);
+                margin-left: 15px;
+            }
+
+        .acImgModal {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        thead {
+            background-color: #7643ea;
+            color: #fff;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #fbf9ff;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f3edff
+        }
+
+        .tableDorne-btn {
+            height: 35px;
+            background-color: #7643ea;
+            border-radius: 0;
+            color: #fff;
+            margin-right: 15px;
+            font-weight: 600;
+            font-size: 15px;
+            -webkit-transition-duration: 500ms;
+            transition-duration: 500ms;
+        }
+
+            .tableDorne-btn:hover, .tableDorne-btn:focus {
+                color: #fff;
+                background-color: #5d25dd;
+                font-weight: 600;
+            }
+
+    </style>
+}
+
+<div id="appAC">
+    @****** Breadcumb Area Start ******@
+    <div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg)">
+    </div>
+    @****** Breadcumb Area End ******@
+    @****** Contact Area Start ******@
+    <div class="dorne-features-destinations-area" id="contact">
+        <div class="container-fluid" style="width:75%">
+            <div class="row">
+                @* 新增按鈕 *@
+                <div class="col-md-6 form-group ">
+                    <button type="button" class="btn dorne-btn" @@click="inserModal"> + 新增活動</button>
+                </div>
+            </div>
+
+            @* 表格 *@
+            <div class="row">
+                <table class="table table-striped table-hover text-center">
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <td>活動編號</td>
+                            <td>負責人員</td>
+                            <td>活動名稱</td>
+                            <td>開始時間</td>
+                            <td>結束時間</td>
+                            <td>位置排序</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="acDTO in acArray">
+                            <td v-if="acDTO.state != null ">
+                                <label class="btn tableDorne-btn">{{acDTO.state}}</label>
+                            </td>
+                            <td v-else></td>
+                            <td><label>{{acDTO.acId}}</label></td>
+                            <td><label>{{acDTO.userName}}</label></td>
+                            <td><label>{{acDTO.title}}</label></td>
+                            <td><label>{{acDTO.startTime}}</label></td>
+                            <td><label>{{acDTO.endTime}}</label></td>
+                            <td><label>{{acDTO.position}}</label></td>
+                            <td>
+                                <button type="button" class="btn tableDorne-btn" @@click="editModal(acDTO.acId)">編輯</button>
+                                <button type="button" class="btn tableDorne-btn" @@click="delAC(acDTO.acId,acDTO.title)">刪除</button>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @****** Contact Area End ******@
+    <div class="dorne-editors-pick-area bg-img bg-overlay-9 section-padding-100" style="background-image: url(/relax/img/bg-img/hero-2.jpg);">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-heading text-center">
+                        <span></span>
+                        <h4>活動預覽</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <template v-if="acGoLength==1">
+                    <div class="col-2"></div>
+
+                    <div class="col-8" style="width: auto; height: 400px;" v-for="acgo in acGoArray">
+                        @* <div class="single-editors-pick-area wow fadeInUp " data-wow-delay="0.2s"> *@
+                        <img v-bind:src="acgo.image" alt="" class="acImg">
+                        <div class="editors-pick-info">
+                            <div class="places-total-destinations ">
+                                <a href="#">{{acgo.title}}</a>
+                                <a href="#">{{acgo.detail}}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                </template>
+                <template v-if="acGoLength==2">
+                    <div class="col-6" style="width: 540px; height: 400px;" v-for="acgo in acGoArray">
+                        @* <div class="single-editors-pick-area wow fadeInUp " data-wow-delay="0.2s"> *@
+                        <img v-bind:src="acgo.image" alt="" class="acImg">
+                        <div class="editors-pick-info">
+                            <div class="places-total-destinations ">
+                                <a href="#" >{{acgo.title}}</a>
+                                <a href="#" >{{acgo.detail}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template v-if="acGoLength==3">
+                    <div class="col-4" style="width: 300px; height: 300px;" v-for="acgo in acGoArray">
+                        @* <div class="single-editors-pick-area wow fadeInUp " data-wow-delay="0.2s"> *@
+                        <img v-bind:src="acgo.image" alt="" class="acImg">
+                        <div class="editors-pick-info">
+                            <div class="places-total-destinations ">
+                                <a href="#" class="text-center">{{acgo.title}}</a>
+                                <a href="#" class="text-center">{{acgo.detail}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="activeModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <template v-if="acEdit==true">
+                        <h5 class="modal-title">編輯活動</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                    </template>
+                    <template v-else>
+                        <h5 class="modal-title">新增活動</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </template>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <template v-if="acEdit==true">
+                            <div class="mb-3">
+                                <label class="form-label">負責人員:</label>
+                                <select class="form-control" v-model="modalMemberId">
+                                    <option v-for="user in UserArray" :value="user.memberId">{{user.userName}}</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-8">
+                                    <label class="form-label">活動名稱:</label>
+                                    <input type="text" class="form-control" v-model="modalTitle" />
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label">排位順序:</label>
+                                    <input type="text" class="form-control" v-model="modalPosition" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">活動簡介:</label>
+                                <input type="text" class="form-control" v-model="modalDetail" placeholder="建議小於20字" />
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-6">
+                                    <label class="form-label">開始時間:</label>
+                                    <input type="date" class="form-control" v-model="modalStartTime" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">結束時間:</label>
+                                    <input type="date" class="form-control" v-model="modalEndTime" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">宣傳圖片:</label>
+                                <input type="text" class="form-control" v-model="modalImg" placeholder="請輸入圖片網址" v-on:change="isImg" />
+                            </div>
+                            <div class="mb-3 text-center" v-if="imgShow">
+                                <img :src="imgShow" alt="" class="acImgModal">
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="mb-3">
+                                <label class="form-label">負責人員:</label>
+                                <select class="form-control" v-model="modalMemberId">
+                                    <option v-for="user in UserArray" :value="user.memberId">{{user.userName}}</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-8">
+                                    <label class="form-label">活動名稱:</label>
+                                    <input type="text" class="form-control" v-model="modalTitle" />
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label">排位順序:</label>
+                                    <input type="text" class="form-control" v-model="modalPosition" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">活動簡介:</label>
+                                <input type="text" class="form-control" v-model="modalDetail" placeholder="建議小於20字" />
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-6">
+                                    <label class="form-label">開始時間:</label>
+                                    <input type="date" class="form-control" v-model="modalStartTime" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">結束時間:</label>
+                                    <input type="date" class="form-control" v-model="modalEndTime" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">宣傳圖片:</label>
+                                <input type="text" class="form-control" v-model="modalImg" placeholder="請輸入圖片網址" v-on:change="isImg" />
+                            </div>
+                            <div class="mb-3 text-center" v-if="imgShow">
+                                <img :src="imgShow" alt="" class="acImgModal">
+                            </div>
+                        </template>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <template v-if="acEdit==true">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" @@click="update">修改</button>
+                    </template>
+                    <template v-else>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" @@click="insert">新增</button>
+                    </template>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* Vue *@
+    <script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+    @* ajax *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        var baseAddress = "https://localhost:7238";
+        var vueApp = {
+            data() {
+                return {
+                    acArray: [],
+                    acGoArray: [],
+                    acGoLength: 0,
+                    acEdit: false,
+                    UserArray: [],
+                    madalacId:"",
+                    modalMemberId: "",
+                    modalTitle: "",
+                    modalDetail: "",
+                    modalStartTime: null,
+                    modalEndTime: null,
+                    modalImg: "",
+                    imgShow: "",
+                    modalPosition: "",
+                }
+            },
+            methods: {
+                showDTO: function () {
+                    let _this = this;
+                    axios.get(`${baseAddress}/api/Active`)
+                        .then(response => {
+                            _this.acArray = response.data;
+                            for (var i = 0; i < _this.acArray.length; i++) {
+                                var today = new Date();
+                                var start = new Date(_this.acArray[i].startTime);
+                                var end = new Date(_this.acArray[i].endTime);
+                                if (today > start && today < end) {
+                                    _this.acArray[i].state = "廣告中";
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                GoDTO: function () {
+                    let _this = this;
+                    axios.get(`${baseAddress}/api/Active/Go`)
+                        .then(response => {
+                            _this.acGoArray = response.data;
+                            _this.acGoLength = _this.acGoArray.length;
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                inserModal: function () {
+                    var _this = this;
+                    _this.clearModal();
+                    _this.acEdit = false;
+                    axios.get(`${baseAddress}/api/Active/User`)
+                        .then(response => {
+                            _this.UserArray = response.data;
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                    $("#activeModal").modal("show");
+                },
+                insert: function () {
+                    var _this = this;
+                    var myAC = {
+                        acId: -1,
+                        memberId: _this.modalMemberId,
+                        title: _this.modalTitle,
+                        startTime: _this.modalStartTime,
+                        endTime: _this.modalEndTime,
+                        image: _this.modalImg,
+                        detail: _this.modalDetail,
+                        position: _this.modalPosition,
+                    };
+                    axios.post(`${baseAddress}/api/Active`, myAC)
+                        .then(response => {
+                            alert(response.data);
+                            if (response.data === "新增成功") {
+                                $("#activeModal").modal("hide");
+                                _this.showDTO();
+                                _this.GoDTO();
+                            }
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                editModal: function (acId) {
+                    var _this = this;
+                    _this.acEdit = true;
+                    axios.get(`${baseAddress}/api/Active/User`)
+                        .then(response => {
+                            _this.UserArray = response.data;
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                    for (var i = 0; i < _this.acArray.length; i++) {
+                        if (_this.acArray[i].acId == acId) {
+                            _this.madalacId = _this.acArray[i].acId;
+                            _this.modalMemberId = _this.acArray[i].memberId;
+                            _this.modalTitle = _this.acArray[i].title;
+                            _this.modalDetail = _this.acArray[i].detail;
+                            _this.modalStartTime = _this.acArray[i].startTime;
+                            _this.modalEndTime = _this.acArray[i].endTime;
+                            _this.modalImg = _this.acArray[i].image;
+                            _this.imgShow = _this.acArray[i].image;
+                            _this.modalPosition = _this.acArray[i].position;
+                        }
+                    }
+                    $("#activeModal").modal("show");
+                },
+                update: function () {
+                    var _this = this;
+                    var myAC = {
+                        acId:_this.madalacId,
+                        memberId: _this.modalMemberId,
+                        title: _this.modalTitle,
+                        detail: _this.modalDetail,
+                        startTime: _this.modalStartTime,
+                        endTime: _this.modalEndTime,
+                        image: _this.modalImg,
+                        position: _this.modalPosition,
+                    };
+                    axios.put(`${baseAddress}/api/Active/${_this.madalacId}`, myAC)
+                        .then(response => {
+                            alert(response.data);
+                            if (response.data === "修改成功") {
+                                $("#activeModal").modal("hide");
+                                _this.showDTO();
+                                _this.GoDTO();
+                                _this.madalacId = "";
+                                _this.modalMemberId = "";
+                                _this.modalTitle = "";
+                                _this.modalDetail = "";
+                                _this.modalStartTime = null;
+                                _this.modalEndTime = null;
+                                _this.modalImg = "";
+                                _this.imgShow = "";
+                                _this.modalPosition = "";
+                            }
+                            _this.showDTO();
+                            _this.GoDTO();
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                isImg: function () {
+                    _this = this;
+                    const img = new Image();
+                    img.onload = function () {
+                        _this.imgShow = _this.modalImg;
+                    };
+                    img.onerror = function () {
+                        _this.imgShow = "";
+                    }
+                    img.src = _this.modalImg;
+                },
+                clearModal: function () {
+                    _this = this;
+                    _this.modalMemberId = "";
+                    _this.modalTitle = "";
+                    _this.modalDetail = "";
+                    _this.modalStartTime = null;
+                    _this.modalEndTime = null;
+                    _this.modalImg = "";
+                    _this.imgShow = "";
+                    _this.modalPosition = "";
+                },
+                delAC: function (acId, title) {
+                    let _this = this;
+                    var ret = confirm(`確定刪除${title}?`)
+                    if (ret == true) {
+                        axios.delete(`${baseAddress}/api/Active/${acId}`)
+                            .then(response => {
+                                alert(response.data);
+                                _this.showDTO();
+                                _this.GoDTO();
+                            })
+                            .catch(err => {
+                                alert(err);
+                            });
+                    }
+                },
+            },
+            mounted: function () {
+                let _this = this;
+                _this.showDTO();
+                _this.GoDTO();
+            }
+        }
+        var app = Vue.createApp(vueApp).mount("#appAC");
+    </script>
+
+}

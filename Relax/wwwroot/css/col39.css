@@ -1,0 +1,42 @@
+.slidecol {
+    background-color: #7643ea;
+    height: 825px;
+}
+
+.rightcol {
+    background-color: #fff;
+}
+
+.slidecol .nav-tabs .nav-link {
+    border: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    background-color: rgba(144, 103, 238, 0.65);
+    text-transform: uppercase;
+    width: 275px;
+    height: 44px;
+    line-height: 44px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+    .slidecol .nav-tabs .nav-link.active {
+        color: #fff;
+        background-color: rgba(67, 25, 161, 0.65);
+        border-color: transparent;
+    }
+
+@media (max-width: 550px) {
+    .slidecol {
+        height: 250px;
+    }
+
+        .slidecol .nav-tabs .nav-link,
+        .slidecol .nav-tabs .nav-link.active {
+            width: 450px;
+        }
+}

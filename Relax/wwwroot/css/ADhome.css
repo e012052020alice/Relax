@@ -1,0 +1,99 @@
+﻿.tripImg {
+    width: 170px;
+    height: 170px;
+    object-fit: cover;
+}
+
+.acImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.col-12 .editors-pick-info .places-total-destinations > a, .editors-pick-info .add-more > a {
+    width: 230px;
+    height: 45px;
+    line-height: 45px;
+    background-color: rgba(67, 25, 161, 0.85);
+}
+
+    .col-12 .editors-pick-info .places-total-destinations > a:last-child {
+        background-color: rgba(42, 42, 42, 0.85);
+        margin-left: 15px;
+    }
+.col-4 .editors-pick-info .places-total-destinations > a, .editors-pick-info .add-more > a {
+    width: 230px;
+    height: 45px;
+    line-height: 45px;
+    background-color: rgba(67, 25, 161, 0.85);
+}
+
+    .col-4 .editors-pick-info .places-total-destinations > a:last-child {
+        background-color: rgba(42, 42, 42, 0.85);
+        margin-left: 15px;
+    }
+
+
+.modal {
+    z-index: 9999;
+}
+
+.modal-content {
+    width: inherit;
+    max-width: inherit;
+    height: inherit;
+    margin: 0 auto;
+    pointer-events: all;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+    justify-content: normal;
+}
+
+    .modal-footer > :not(:first-child) {
+        margin-left: 0px;
+    }
+
+.modal-title {
+    color: #ffffff;
+}
+
+.moadl-text {
+    color: #ffffff;
+}
+
+.vertical-alignment-helper {
+    display: table;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+}
+
+.vertical-align-center {
+    display: table-cell;
+    vertical-align: middle;
+    pointer-events: none;
+}
+
+.date-map-area > a:last-child {
+    background-color: #7643ea;
+    color: #fff;
+}
+.adtDetailtext {
+    width: 240px; /* 設置寬度，根據你的實際需求調整 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 顯示的行數 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 如果文字太長，顯示省略號 */
+}
+
+.adtDetaildiv {
+    /*background-color: rgba(67, 25, 161, 0.65);*/
+}
+

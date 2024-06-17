@@ -1,0 +1,162 @@
+﻿@section Styles {
+	<link href="~/css/attractions.css" rel="stylesheet" />
+}
+
+<div id="app">
+	@****** Breadcumb Area Start ******@
+	<div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg);">
+	</div>
+	@****** Breadcumb Area End ******@
+	<section class="addattractions-area" style="background-image: url(/relax/img/bg-img/hero-3.jpg)">
+		<div class="container-fluid w-75">
+			<div class="container">
+				<div class="row edittrips-notrip" v-if="tripDtoArray.length === 0">
+					<h3>尚未有編輯行程, </h3>
+					<a href="@Url.Action("Addtrips")" class="generate-link">馬上去訂製行程</a>
+				</div>
+				<div class="row" v-else>
+					<div class="col-12">
+						<div v-for="(tripGroup, index) in groupedTrips" :key="index">
+							<div class="card">
+								<div class="card-header addtrips-btn-area" :data-toggle="'#collapse-' + index" :aria-expanded="activeTrip === index ? 'true' : 'false'" @@click="activeTrip = (activeTrip === index ? null : index)">
+									<h4 style="color:#fff;margin:1rem 0px">{{ tripGroup.tripName }}</h4>
+									<button type="button" class="btn edittrips-btn-danger" @@click="deleteTrip(tripGroup.days[0].dailyTrips[0].tripId)">刪除行程</button>
+								</div>
+								<div class="card-body">
+									<div :id="'collapse-' + index" class="collapse" :class="{ 'show': activeTrip === index }">
+										<div v-for="(dayGroup, dayNumber) in tripGroup.days" :key="dayNumber">
+											<div>
+												<h3 style="color:#fff;margin:1rem 0px">Day{{ dayNumber+1 }}</h3>
+											</div>
+											<div v-for="dailyTrip in dayGroup.dailyTrips" :key="dailyTrip.attractionId">
+												<div class="col-12" style="margin:10px 0px 50px 0px;">
+													<hr>
+													<div class="row form-group mb-3">
+														<h4 style="color:#fff;margin-left:15px">行程{{dailyTrip.dailyTripNumber}}</h4>
+													</div>
+													<div class="row form-group" style="margin:0px auto 1rem auto">
+														<div style="max-width:120px;margin-left:20px">
+															<input class="attractionsInput-label" for="attractionName" value="景點名稱 :" disabled />
+														</div>
+														<div class="col-10">
+															<input type="text" class="attractionsInput" id="attractionName" v-model="dailyTrip.attractionName" disabled>
+														</div>
+													</div>
+													<div class="row form-group" style="margin:0px auto 1rem auto">
+														<div style="max-width:120px;margin-left:20px">
+															<input class="attractionsInput-label" for="description" value="景點描述 :" disabled />
+														</div>
+														<div class="col-10">
+															<input class="attractionsInput" id="description" v-model="dailyTrip.description" disabled />
+														</div>
+													</div>
+													<div class="row form-group" style="margin:0px auto 1rem auto">
+														<div style="max-width:120px;margin-left:20px">
+															<input class="attractionsInput-label" for="tag" value="標籤 :" disabled />
+														</div>
+														<div class="col-10">
+															<input class="attractionsInput" id="tag" v-model="dailyTrip.tag" disabled>
+														</div>
+													</div>
+													<div class="row form-group" style="margin:0px auto 1rem auto">
+														<div style="max-width:120px;margin-left:20px">
+															<input class="attractionsInput-label" for="timeCategory" value="時段 :" disabled />
+														</div>
+														<div class="col-10">
+															<input class="attractionsInput" id="timeCategory" v-model="dailyTrip.timeCategory" disabled>
+														</div>
+													</div>
+													<div class="row form-group" style="margin:0px auto 1rem auto">
+														<div style="max-width:120px;margin-left:20px">
+															<input class="attractionsInput-label" for="estimatedStayTime" value="預計停留時間 :" disabled>
+														</div>
+														<div class="col-10">
+															<input class="attractionsInput" id="estimatedStayTime" v-model="dailyTrip.estimatedStayTime" disabled>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					@*<div class="buttons-container">
+					<button id="saveBtn" class="btn btn-success">修改行程</button>
+					</div>*@
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+
+@section Scripts {
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+	<script>
+		var vueapp = {
+			data() {
+				return {
+					tripDtoArray: [],
+					activeTrip: null,
+					groupedTrips: []
+				};
+			},
+			computed: {
+				groupedTripDtoArray: function () {
+					const grouped = {};
+					this.tripDtoArray.forEach((tripDto) => {
+						const tripKey = `${tripDto.tripName}-${tripDto.dayNumber}-${tripDto.dailyTripNumber}`;
+						if (!grouped[tripDto.tripName]) {
+							grouped[tripDto.tripName] = {};
+						}
+						if (!grouped[tripDto.tripName][tripDto.dayNumber]) {
+							grouped[tripDto.tripName][tripDto.dayNumber] = [];
+						}
+						grouped[tripDto.tripName][tripDto.dayNumber].push(tripDto);
+					});
+					// Convert object to array
+					this.groupedTrips = Object.entries(grouped).map(([tripName, days]) => ({ tripName, show: false, days: Object.entries(days).map(([dayNumber, dailyTrips]) => ({ dayNumber, dailyTrips })) }));
+				}
+			},
+			methods: {
+				showTrips: function () {
+					axios.get('@Url.Action("ShowTrips", "AttractionsEdit")')
+						.then(response => {
+							this.tripDtoArray = response.data;
+							if (this.tripDtoArray.length > 0) {
+								this.groupedTripDtoArray();
+							}
+						})
+						.catch(error => {
+							console.log(error);
+						});
+				},
+				deleteTrip(tripId) {
+					if (!tripId) {
+						console.error('無效的 tripId');
+						return;
+					}
+					if (!confirm('您確定要刪除這個行程嗎？')) {
+						return;
+					}
+					const deleteUrl = '@Url.Action("DeleteTrip", "AttractionsEdit", new { tripId = "__tripId__" })'.replace('__tripId__', tripId);
+					axios.delete(deleteUrl)
+						.then(response => {
+							alert('行程刪除成功', response);
+							this.showTrips(); // 重新載入行程列表，刷新資料
+						})
+						.catch(error => {
+							alert('刪除行程錯誤:', error);
+						});
+				},
+			},
+			mounted() {
+				this.showTrips();
+				console.log(this.groupedTrips);
+			}
+		};
+		var app = Vue.createApp(vueapp).mount('#app');
+	</script>
+}

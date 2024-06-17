@@ -1,0 +1,424 @@
+﻿@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"
+          integrity="sha256-FdatTf20PQr/rWg+cAKfl6j4/IY3oohFAJ7gVC3M34E=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css">
+}
+
+<div id="app">
+    @****** Breadcumb Area Start ******@
+    <div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg);">
+    </div>
+    @****** Breadcumb Area End ******@
+    <section class="addattractions-area" style="background-image: url(/relax/img/bg-img/hero-3.jpg)">
+        <div class="container-fluid w-75">
+            <div class="container">
+                <div class="form-group">
+                    <input type="text" class="addtrips-input-tripName" id="tripName" v-model="tripName" placeholder="輸入行程名稱">
+                    <div v-if="tripNameError" class="text-danger">行程名稱為必填</div>
+                </div>
+                <div v-for="(day, dayIndex) in days" :key="dayIndex">
+                    <h5>第 {{ day.dayNumber }} 天</h5>
+                    <div class="row attractions-box" style="margin-top:20px;" v-for="(attr, attrIndex) in day.attrs" :key="attrIndex" :ref="`day${day.dayNumber}-attr${attrIndex + 1}`">
+                        <!-- 表單區 -->
+                        <div class="col-8">
+                            <div class="attractions-search-group" style="margin-top:10px;">
+                                <div class="input-group">
+                                    <input type="text" class="attractionsInput" placeholder="輸入景點" v-model="attr.attractionName" :ref="`attractionName${day.dayNumber}-${attrIndex + 1}`">
+                                </div>
+                                <div v-if="attr.attractionNameError">
+                                    <p class="text-danger">景點名稱為必填</p>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="attractionsInput" placeholder="輸入描述" v-model="attr.description" :ref="`description${day.dayNumber}-${attrIndex + 1}`" readonly>
+                                </div>
+                                <div class="row mt-3 mb-3">
+                                    <div class="col-5">
+                                        <div class="select2-container">
+                                            <select class="select2-multiple w-100" multiple="multiple" v-model="attr.tag" :ref="`tag${day.dayNumber}-${attrIndex + 1}`"
+                                                    data-width="100%" data-placeholder="選擇標籤" data-allow-clear="true" disabled>
+                                                @foreach (var tag in ViewBag.Tags)
+                                                {
+                                                    <option value="@tag.Value">@tag.Text</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <select class="custom-select" v-model="attr.timeCategory" :ref="`timeCategory${day.dayNumber}-${attrIndex + 1}`" disabled>
+                                            <option selected>時段</option>
+                                            <option value="早上">早上</option>
+                                            <option value="午間">午間</option>
+                                            <option value="傍晚">傍晚</option>
+                                            <option value="全天">全天</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-3">
+                                        <select class="custom-select" v-model="attr.estimatedStayTime" :ref="`estimatedStayTime${day.dayNumber}-${attrIndex + 1}`" disabled>
+                                            <option selected>預計停留時間</option>
+                                            <option value="30">30分鐘</option>
+                                            <option value="60">60分鐘</option>
+                                            <option value="90">90分鐘</option>
+                                            <option value="120">120分鐘</option>
+                                            <option value="150">150分鐘</option>
+                                            <option value="180">180分鐘</option>
+                                            <option value="210">210分鐘</option>
+                                            <option value="240">240分鐘</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2">
+                                        <select class="custom-select" v-model="attr.city" :ref="`city${day.dayNumber}-${attrIndex + 1}`" disabled>
+                                            <option selected>縣市</option>
+                                            <option value="高雄">高雄市</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 地圖區 -->
+                        <div class="col-4" style="padding-right:0px">
+                            <div class="attractions-map-container" :id="`map${day.dayNumber}-${attrIndex + 1}`"></div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn addtrips-morerow-btn" @@click="morerow(day.dayNumber)">更多景點</button>
+                </div>
+                <div class="row addtrips-btn-area p-3">
+                    <button type="button" class="btn dorne-btn" @@click="addDay">新增天數</button>
+                    <button type="button" class="btn dorne-btn" @@click="saveTrip">儲存行程</button>
+                </div>               
+            </div>
+        </div>
+    </section>
+</div>
+@section Scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"
+            integrity="sha256-AFAYEOkzB6iIKnTYZOdUf9FFje6lOTYdwRJKwTN5mks=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=myApiKey&callback=initMaps&libraries=places"></script>
+
+    <script>
+        function initMap(containerId, lat, lng) {
+            console.log(`Initializing map for container: ${containerId}`);
+            var container = document.getElementById(containerId);
+            if (container) {
+                var location = { lat: lat || 22.640546951893487, lng: lng || 120.30261518229459 };
+                var map = new google.maps.Map(container, {
+                    zoom: 16,
+                    center: location
+                });
+
+                var marker = new google.maps.Marker({
+                    position: location,
+                    map: map
+                });
+
+                return map; // Return the map instance
+            } else {
+                console.error(`Container not found: ${containerId}`);
+            }
+        }
+
+        function initMaps() {
+            console.log('Google Maps API initialized');
+            if (vueApp && vueApp.initAllMaps) {
+                vueApp.initAllMaps();
+            }
+        }
+        var vueApp = {
+            data() {
+                return {
+                    tripName: "",
+                    tripNameError: false,  // 新增行程名稱錯誤屬性
+                    days: [
+                        {
+                            dayNumber: 1,
+                            attrs: [
+                                { attractionName: "", city: "縣市", description: "", tag: [], timeCategory: "時段", estimatedStayTime: "預計停留時間", xCoordinate: "", yCoordinate: "", isApproved: true, mapInstance: null, attractionId: 0, dailyTripNumber: 1, attractionNameError: false }  // 新增景點名稱錯誤屬性
+                            ]
+                        }
+                    ],
+                    showModal: false,  // 控制模態窗口顯示的變量
+                }
+            },
+            methods: {
+                addDay: function () {
+                    let newDayNumber = this.days.length + 1;
+                    this.days.push({
+                        dayNumber: newDayNumber,
+                        attrs: [
+                            { attractionName: "", city: "縣市", description: "", tag: [], timeCategory: "時段", estimatedStayTime: "預計停留時間", xCoordinate: "", yCoordinate: "", isApproved: true, mapInstance: null, attractionId: 0, dailyTripNumber: 1 }
+                        ]
+                    });
+                    this.$nextTick(() => {
+                        this.initMapsForDay(newDayNumber);
+                        this.initAutocompletesForDay(newDayNumber);
+                        this.initSelect2ForDay(newDayNumber);
+                    });
+                },
+                morerow: function (dayNumber) {
+                    let day = this.days.find(d => d.dayNumber === dayNumber);
+                    if (day) {
+                        let dailyTripNumber = day.attrs.length + 1; // 自動生成每日行程編號
+                        day.attrs.push({
+                            attractionName: "",
+                            city: "縣市",
+                            description: "",
+                            tag: [],
+                            timeCategory: "時段",
+                            estimatedStayTime: "預計停留時間",
+                            xCoordinate: "",
+                            yCoordinate: "",
+                            isApproved: true,
+                            mapInstance: null,
+                            attractionId: 0,
+                            dailyTripNumber: dailyTripNumber, // 自動生成的值
+                            attractionNameError: false  // 新增景點名稱錯誤屬性
+                        });
+                        this.$nextTick(() => {
+                            let length = day.attrs.length;
+                            let mapId = `map${dayNumber}-${length}`;
+                            let map = initMap(mapId);
+                            day.attrs[length - 1].mapInstance = map; // Store the map instance
+                            this.initAutocomplete(`attractionName${dayNumber}-${length}`, length - 1);
+                            this.initSelect2(`tag${dayNumber}-${length}`);
+                        });
+                    }
+                },
+                updateMapLocation: function (dayNumber, index, x, y) {
+                    let lat = y / 100000; // 確保使用的是正確的轉換邏輯
+                    let lng = x / 100000;
+                    console.log(`Updated coordinates to lat: ${lat}, lng: ${lng}`); // 打印檢查
+                    let day = this.days.find(d => d.dayNumber === dayNumber);
+                    if (day) {
+                        let map = day.attrs[index].mapInstance;
+                        if (map) {
+                            let newCenter = new google.maps.LatLng(lat, lng);
+                            map.setCenter(newCenter);
+                            new google.maps.Marker({
+                                position: newCenter,
+                                map: map
+                            });
+                        } else {
+                            console.error("Map instance not found");
+                        }
+                    }
+                },
+                initAutocomplete: function (ref, index) {
+                    let input = this.$refs[ref];
+                    if (input && input.length > 0) {
+                        $(input[0]).autocomplete({
+                            source: function (request, response) {
+                                $.ajax({
+                                    url: '/AttractionsEdit/SearchAttractionByName',
+                                    dataType: 'json',
+                                    data: { name: request.term },
+                                    success: function (data) {
+                                        response($.map(data, function (item) {
+                                            return {
+                                                label: item.attractionName,
+                                                value: item.attractionName,
+                                                desc: item.description,
+                                                city: item.city,
+                                                tag: item.tag,
+                                                timeCategory: item.timeCategory,
+                                                estimatedStayTime: item.estimatedStayTime,
+                                                x: item.xCoordinate,
+                                                y: item.yCoordinate,
+                                                attractionId: item.attractionId || 0, // 確保這些屬性被填入
+                                                dailyTripNumber: item.dailyTripNumber || 0 // 確保這些屬性被填入
+                                            };
+                                        }));
+                                    }
+                                });
+                            },
+                            minLength: 1,
+                            select: (event, ui) => {
+                                console.log(ui.item);  // 確認接收到的數據
+                                let dayNumber = parseInt(ref.match(/attractionName(\d+)-/)[1]);
+                                let day = this.days.find(d => d.dayNumber === dayNumber);
+                                if (day && index < day.attrs.length) {
+                                    let attr = day.attrs[index];
+                                    attr.attractionName = ui.item.label;  // 更新景點名稱
+                                    attr.description = ui.item.desc;
+                                    attr.city = ui.item.city;
+                                    attr.tag = ui.item.tag.split(',');  // 逗號分隔的標籤
+                                    attr.timeCategory = ui.item.timeCategory;
+                                    attr.estimatedStayTime = ui.item.estimatedStayTime.toString(); // 轉換為字符串，確保與 <select> 元素的值匹配
+                                    attr.xCoordinate = ui.item.x;
+                                    attr.yCoordinate = ui.item.y;
+                                    attr.attractionId = ui.item.attractionId; // 更新 attractionId
+                                    attr.dailyTripNumber = day.attrs.length; // 更新 dailyTripNumber
+
+                                    // 更新地圖位置
+                                    this.updateMapLocation(dayNumber, index, ui.item.x, ui.item.y);
+
+                                    // 確保 nextTick 在所有 DOM 更新後執行
+                                    this.$nextTick(() => {
+                                        $(this.$refs[`tag${dayNumber}-${index + 1}`][0]).val(attr.tag).trigger('change');
+                                        $(this.$refs[`timeCategory${dayNumber}-${index + 1}`][0]).val(attr.timeCategory).trigger('change');
+                                        $(this.$refs[`city${dayNumber}-${index + 1}`][0]).val(attr.city).trigger('change');
+                                    });
+                                }
+                            }
+                        });
+                    }
+                },
+                initSelect2: function (ref) {
+                    this.$nextTick(() => {
+                        let select = this.$refs[ref];
+                        if (select && select.length > 0 && select[0] instanceof HTMLSelectElement) {
+                            let jquerySelect = $(select[0]);
+                            jquerySelect.select2({
+                                theme: 'bootstrap4',
+                                placeholder: jquerySelect.data('placeholder'),
+                                allowClear: Boolean(jquerySelect.data('allow-clear')),
+                                closeOnSelect: !jquerySelect.attr('multiple')
+                            }).on('change', () => {
+                                // 手動更新 Vue 數據模型中的標籤數組
+                                let match = ref.match(/tag(\d+)-(\d+)/);
+                                let dayNumber = parseInt(match[1]);
+                                let index = parseInt(match[2]) - 1;
+                                let day = this.days.find(d => d.dayNumber === dayNumber);
+                                if (day) {
+                                    day.attrs[index].tag = jquerySelect.val() || [];
+                                    console.log(`Value changed on ${ref}: `, jquerySelect.val());
+                                }
+                            });
+                            console.log(`Select2 initialized for ${ref}`);
+                        } else {
+                            console.error(`Select element not found or not an instance of HTMLSelectElement: ${ref}`);
+                        }
+                    });
+                },
+                initMapsForDay: function (dayNumber) {
+                    let day = this.days.find(d => d.dayNumber === dayNumber);
+                    if (day) {
+                        day.attrs.forEach((attr, attrIndex) => {
+                            this.$nextTick(() => {
+                                console.log(`Initializing map for: map${day.dayNumber}-${attrIndex + 1}`);
+                                let map = initMap(`map${day.dayNumber}-${attrIndex + 1}`);
+                                attr.mapInstance = map; // Store the map instance
+                            });
+                        });
+                    }
+                },
+                initAutocompletesForDay: function (dayNumber) {
+                    let day = this.days.find(d => d.dayNumber === dayNumber);
+                    if (day) {
+                        day.attrs.forEach((attr, attrIndex) => {
+                            this.$nextTick(() => {
+                                this.initAutocomplete(`attractionName${day.dayNumber}-${attrIndex + 1}`, attrIndex);
+                            });
+                        });
+                    }
+                },
+                initSelect2ForDay: function (dayNumber) {
+                    let day = this.days.find(d => d.dayNumber === dayNumber);
+                    if (day) {
+                        day.attrs.forEach((attr, attrIndex) => {
+                            this.$nextTick(() => {
+                                this.initSelect2(`tag${day.dayNumber}-${attrIndex + 1}`);
+                            });
+                        });
+                    }
+                },
+                saveTrip: function () {
+                    this.tripNameError = false;  // 重置行程名稱錯誤狀態
+                    let hasError = false;
+
+                    if (!this.tripName) {
+                        this.tripNameError = true;
+                        hasError = true;
+                    }
+
+                    this.days.forEach(day => {
+                        day.attrs.forEach(attr => {
+                            attr.attractionNameError = false;  // 重置景點名稱錯誤狀態
+
+                            if (!attr.attractionName) {
+                                attr.attractionNameError = true;
+                                hasError = true;
+                            }
+                        });
+                    });
+
+                    if (hasError) {
+                        // window.alert("請填寫所有必填欄位");
+                        return;  // 有錯誤時直接返回，不繼續執行
+                    }
+
+                    const tripData = {
+                        tripName: this.tripName,
+                        days: this.days.map(day => ({
+                            dayNumber: day.dayNumber,
+                            attrs: day.attrs.map(attr => {
+                                console.log('dailyTripNumber:', attr.dailyTripNumber);
+                                return {
+                                    attractionId: attr.attractionId || 0,
+                                    dailyTripNumber: attr.dailyTripNumber || 0,
+                                    estimatedStayTime: attr.estimatedStayTime || 0
+                                };
+                            })
+                        }))
+                    };
+
+                    console.log('Sending tripData:', tripData);
+                    axios.post('https://localhost:7238/AttractionsEdit/SaveTrip', tripData)
+                        .then(response => {
+                            console.log('行程儲存成功', response.data);
+                            alert("行程儲存成功");
+                            window.location.href = '/AttractionsEdit/Edittrips';
+                        })
+                        .catch(error => {
+                            console.error('行程儲存失敗', error);
+                            alert("行程儲存失敗");
+                        });
+                },
+                initAllAutocompletes: function () {
+                    console.log('Initializing all autocompletes');
+                    this.days.forEach((day, dayIndex) => {
+                        day.attrs.forEach((attr, attrIndex) => {
+                            this.$nextTick(() => {
+                                this.initAutocomplete(`attractionName${day.dayNumber}-${attrIndex + 1}`, attrIndex);
+                            });
+                        });
+                    });
+                },
+                initAllMaps: function () {
+                    console.log('Initializing all maps');
+                    this.days.forEach((day, dayIndex) => {
+                        day.attrs.forEach((attr, attrIndex) => {
+                            this.$nextTick(() => {
+                                console.log(`Initializing map for: map${day.dayNumber}-${attrIndex + 1}`);
+                                let map = initMap(`map${day.dayNumber}-${attrIndex + 1}`);
+                                attr.mapInstance = map; // Store the map instance
+                            });
+                        });
+                    });
+                },
+                initAllSelect2: function () {
+                    console.log('Initializing all Select2');
+                    this.days.forEach((day, dayIndex) => {
+                        day.attrs.forEach((attr, attrIndex) => {
+                            this.$nextTick(() => {
+                                this.initSelect2(`tag${day.dayNumber}-${attrIndex + 1}`);
+                            });
+                        });
+                    });
+                },
+            },
+            mounted() {
+                window.onload = () => {
+                    console.log('Window loaded, initializing all maps and autocompletes');
+                    this.initAllMaps();
+                    this.initAllAutocompletes();
+                };
+                this.initAllSelect2();
+            },
+        }
+        var app = Vue.createApp(vueApp).mount('#app');
+    </script>
+}

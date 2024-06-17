@@ -1,0 +1,204 @@
+.slidecol {
+    background-color: #7643ea;
+    height: 825px;
+}
+
+.rightcol {
+    background-color: #F2E3C6;
+    position: relative; /* 這讓 rightcol 支持絕對定位的子元素 */
+}
+
+.slidecol .nav-tabs .nav-link {
+    border: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    background-color: rgba(144, 103, 238, 0.65);
+    text-transform: uppercase;
+    width: 275px;
+    height: 44px;
+    line-height: 44px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+    .slidecol .nav-tabs .nav-link.active {
+        color: #fff;
+        background-color: rgba(67, 25, 161, 0.65);
+        border-color: transparent;
+    }
+
+@media (max-width: 550px) {
+    .slidecol {
+        height: 250px;
+    }
+
+        .slidecol .nav-tabs .nav-link,
+        .slidecol .nav-tabs .nav-link.active {
+            width: 450px;
+        }
+}
+
+.form-and-map-container {
+    background-color: #D9FFFF; /* 背景色 */
+    margin-top: 20px;
+}
+
+.search-group {
+    background-color: #fff;
+    border-radius: 0.25rem;
+    margin-bottom: 15px;
+    padding: 15px;
+}
+
+.map-container {
+    height: 100%;  地圖高度設為100% 
+    width: 100%;  地圖寬度設為100% 
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    padding-bottom: 15px;  留出足夠的底部空間 
+}
+
+.input-group-text {
+    background-color: #e9ecef;
+    border: none;
+}
+
+/* 調整select元素的排列 */
+.select-flex {
+    display: flex;
+    gap: 15px; /* 兩個select之間的間隙 */
+}
+
+/* 確保內部元素高度一致 */
+.search-group > .input-group,
+.search-group > .select-flex > select {
+    height: calc(2.25rem + 2px); /* Bootstrap 4的input高度 */
+}
+
+.delete-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    padding: 5px;
+    background-color: red;
+    color: white;
+    z-index: 1000; /* 設定一個高值 */
+}
+
+.row {
+    position: relative;
+}
+
+
+/* 定位新增景點按鈕到右下角 */
+.add-attraction-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    margin-top: 10px;
+}
+
+.buttons-container {
+    position: absolute; /* 將按鈕的包裹容器設為絕對定位 */
+    bottom: 0; /* 定位到底部 */
+    right: 0; /* 定位到右側 */
+    padding: 10px; /* 根據需要添加一些內邊距 */
+}
+
+.randomhistory-div {
+    position: relative; /* 為了絕對定位按鈕 */
+    background-color: #f5f5dc; /* 這裡將使用您提供的底色代碼 */
+    border: 2px solid #333333; /* 黑色或深灰色邊框 */
+    border-radius: 8px; /* 邊框圓角 */
+    padding: 16px; /* 內邊距 */
+    margin-bottom: 5px; /* 下方外邊距 */
+    margin-top: 10px;
+    box-sizing: border-box; /* 確保邊框和內邊距包含在高度內 */
+}
+
+.delete-randomhistory-btn {
+    position: absolute;
+    top: 10px; /* 右上角的定位 */
+    right: 10px;
+    padding: 5px 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.select2-container {
+    width: 100%; /* 確保 select2 元素寬度充滿容器 */
+    margin-bottom: 10px; /* 為 select2 下方提供空間 */
+}
+
+.select-flex {
+    display: flex;
+    justify-content: space-between; /* 確保 select 元素之間均勻分布 */
+}
+
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+    z-index: 2000; /* 高於一般內容 */
+}
+
+.custom-modal-dialog {
+    position: relative;
+    width: 50%;
+    margin: 10% auto; /* 垂直居中 */
+    padding: 20px;
+}
+
+.custom-modal-content {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.custom-modal-header,
+.custom-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-modal-body {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.close-button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: large;
+}
+
+/*.btn {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    border-radius: 5px;
+}*/
+
+.btn-primary {
+    background-color: #007bff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+}

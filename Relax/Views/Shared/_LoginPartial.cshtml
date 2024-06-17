@@ -1,0 +1,102 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@* 登入時顯示暱稱 *@
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var userName = user?.Name;
+}
+
+<a class="navbar-brand" asp-controller="Home" asp-action="Index">
+    <img src="/relax/img/LOGO.webp" alt="">
+</a>
+@* 響應式Nav按鈕 *@
+@* <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#dorneNav" aria-controls="dorneNav" aria-expanded="false" aria-label="Toggle navigation"><span class="fa fa-bars"></span></button> *@
+<!-- Nav -->
+<div class="collapse navbar-collapse" id="dorneNav">
+    <ul class="navbar-nav mr-auto" id="dorneMenu">
+        @* 首頁 *@
+        @*         <li class="nav-item">
+        <a class="nav-link" asp-controller="Home" asp-action="Index">首頁 <span class="sr-only">(current)</span></a>
+        </li> *@
+        @* @if (SignInManager.IsSignedIn(User))*@ 
+        {
+        @* 行程管理 *@
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" asp-controller="AttractionsEdit" asp-action="Index" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">行程管理 <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" asp-controller="AttractionsEdit" asp-action="Addattractions">新增景點</a>
+                <a class="dropdown-item" asp-controller="AttractionsEdit" asp-action="Addtrips">新增行程</a>
+                <a class="dropdown-item" asp-controller="AttractionsEdit" asp-action="Edittrips">我的行程</a>
+                <a class="dropdown-item" asp-controller="AttractionsEdit" asp-action="Randomtrips">我的Random行程</a>
+            </div>
+        </li>
+        @* 廣告管理 *@
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Members" asp-action="Share">分享行程</a>
+        </li>
+        @* 後臺管理 *@
+        @if (User.IsInRole("Staff"))
+        {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">後台管理<i class="fa fa-angle-down" aria-hidden="true"></i></a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                <a class="dropdown-item" asp-controller="Backstage" asp-action="MemdersBack">會員管理</a>
+                @* <a class="dropdown-item" asp-controller="Backstage" asp-action="TripBack">行程管理</a> *@
+                <a class="dropdown-item" asp-controller="Backstage" asp-action="ShareBack">分享管理</a>
+                <a class="dropdown-item" asp-controller="Backstage" asp-action="ActiveBack">活動管理</a>
+                <a class="dropdown-item" asp-controller="Backstage" asp-action="Sensitivity">敏感詞審查</a>
+                <a class="dropdown-item" asp-controller="Backstage" asp-action="Analysis">網站流量分析</a>
+                <a class="dropdown-item" asp-controller="Backstage" asp-action="UserBehavior">使用者行為分析</a>
+            </div>
+        </li>
+        }
+    </ul>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div class="dorne-signin-btn">
+            <a class="nav-link" style="margin-right:0px" asp-controller="Members" asp-action="Manage">Hello @userName ! </a>
+        </div>
+        <div class="dorne-add-listings-btn">
+            <form id="logoutForm" class="form-inline dropdown-item" style="color:white" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <a id="mylogout">登出</a>
+            </form>
+        </div>
+        <script>
+            @* 登出 *@
+                document.getElementById('mylogout').onclick = function () {
+                    document.getElementById('logoutForm').submit();
+                    return false;
+                };
+        </script>
+
+    }
+    else
+    {
+        @* Signin btn *@
+        <div class="dorne-signin-btn">
+            <a asp-area="Identity" asp-page="/Account/Login">登入 / 註冊</a>
+        </div>
+    }
+</div>
+
+<script>
+    @*添加active*@
+        document.addEventListener('DOMContentLoaded', function () {
+    @*獲取當前 URL 的路徑名稱*@
+                var currentPath = window.location.pathname;
+    @*選擇所有具有 nav-link 類別的元素*@
+                var navLinks = document.querySelectorAll('.nav-link');
+    @*遍歷所有導航連結*@
+                navLinks.forEach(function (link) {
+    @*獲取每個連結的 href 屬性值*@
+                    var linkPath = link.getAttribute('href');
+    @*如果當前 URL 的路徑名稱與連結的 href 屬性值相等，則為對應的導航項目添加 active 類別*@
+                    if (currentPath === linkPath) {
+                        link.parentNode.classList.add('active');
+                    }
+                });
+        });
+
+</script>

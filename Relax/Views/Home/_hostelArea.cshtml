@@ -1,0 +1,104 @@
+﻿<link href="~/css/api.css" rel="stylesheet" />
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="section-heading dark text-center">
+				<span></span>
+				<h4>推薦住宿</h4>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<!-- Single Features Area -->
+		<template v-if="isSearch==false">
+			<div v-else class="owl-item" style="width: 20%;padding-right: 50px;">
+				<div class="single-features-area">
+					<a href="@Html.Raw("https://www.google.com/maps/place/%E9%AB%98%E9%9B%84%E6%B4%B2%E9%9A%9B%E9%85%92%E5%BA%97-InterContinental+Kaohsiung/@22.6113523,120.3009183,17z/data=!4m9!3m8!1s0x346e032950294b0f:0xd64d89f4bba7744a!5m2!4m1!1i2!8m2!3d22.6113474!4d120.3034932!16s%2Fg%2F11q25jm0hl?entry=ttu")">
+						<img src="~/images/hotel.webp" alt="photo" class="hostelImg" />
+						<div class="feature-content d-flex align-items-center justify-content-between">
+							<div class="feature-title">
+								<h5 class="card-title">
+									高雄洲際酒店
+								</h5>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div v-else v-else class="owl-item" style="width: 20%;padding-right: 50px;">
+				<div class="single-features-area">
+					<a href="@Html.Raw("https://www.google.com/maps/place/%E6%99%B6%E8%8B%B1%E5%9C%8B%E9%9A%9B%E8%A1%8C%E9%A4%A8+Silks+Club/@22.6104775,120.3029448,17z/data=!4m10!3m9!1s0x346e037c7ad2690f:0x2f84e71e446ff0fa!5m3!1s2024-07-11!4m1!1i2!8m2!3d22.6104726!4d120.3055197!16s%2Fg%2F11cnbqszzc?entry=ttu")">
+						<img src="~/images/hotel2.webp" alt="photo" class="hostelImg" />
+						<div class="feature-content d-flex align-items-center justify-content-between">
+							<div class="feature-title">
+								<h5 class="card-title">
+									晶英國際行館 Silks Club
+								</h5>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div v-else v-else class="owl-item" style="width: 20%;padding-right: 50px;">
+				<div class="single-features-area">
+					<a href="@Html.Raw("https://www.google.com/maps/place/H2O+HOTEL%E6%B0%B4%E4%BA%AC%E6%A3%A7%E5%9C%8B%E9%9A%9B%E9%85%92%E5%BA%97/@22.6628067,120.2996251,17z/data=!3m1!5s0x346e050143cad719:0xdd59f654240923bd!4m10!3m9!1s0x346e050144af48d7:0x9a404f294b754a58!5m3!1s2024-07-11!4m1!1i2!8m2!3d22.6628018!4d120.3022!16s%2Fg%2F11clyzlvmy?entry=ttu")">
+						<img src="~/images/hotel3.webp" alt="photo" class="hostelImg" />
+						<div class="feature-content d-flex align-items-center justify-content-between">
+							<div class="feature-title">
+								<h5 class="card-title">
+									水京棧國際酒店 (H2O Hotel)
+								</h5>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div v-else class="owl-item" style="width: 20%;padding-right: 50px;">
+				<div class="single-features-area">
+					<a href="@Html.Raw("https://www.google.com/maps/place/%E9%AB%98%E9%9B%84%E6%BC%A2%E4%BE%86%E5%A4%A7%E9%A3%AF%E5%BA%97/@22.6194727,120.294197,17z/data=!3m1!5s0x346e047fcb8f2b91:0x7386b54b462e1280!4m10!3m9!1s0x346e047fb889e755:0xbf9da0eae0608cac!5m3!1s2024-07-11!4m1!1i2!8m2!3d22.6194678!4d120.2967719!16s%2Fg%2F124xwd8x9?entry=ttu")">
+						<img src="~/images/hotel4.webp" alt="photo" class="hostelImg" />
+						<div class="feature-content d-flex align-items-center justify-content-between">
+							<div class="feature-title">
+								<h5 class="card-title">
+									高雄漢來大飯店
+								</h5>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div v-else class="owl-item" style="width: 20%;padding-right: 50px;">
+				<div class="single-features-area">
+					<a href="@Html.Raw("https://www.google.com/maps/place/%E7%BE%A9%E5%A4%A7%E7%9A%87%E5%AE%B6%E9%85%92%E5%BA%97/@22.7298072,120.3988586,17z/data=!4m10!3m9!1s0x346e111b5b196061:0xe62b2dbb40057517!5m3!1s2024-07-11!4m1!1i2!8m2!3d22.7298023!4d120.4014335!16s%2Fg%2F1264lv79r?entry=ttu")">
+						<img src="~/images/hotel5.webp" alt="photo" class="hostelImg" />
+						<div class="feature-content d-flex align-items-center justify-content-between">
+							<div class="feature-title">
+								<h5 class="card-title">
+									義大皇家酒店
+								</h5>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</template>
+		<template v-else>
+			<div v-if="hotelArray2.length==0">
+				沒有推薦
+			</div>
+			<div v-else class="owl-item" v-for="(hotel, index) in hotelArray2" :key="index" style="width: 20%;padding-right: 50px;">
+				<div class="single-features-area">
+					<a :href="'https://www.google.com/maps/place/?q=place_id:'+hotel.place_id">
+						<img :src="getPhotoUrl(hotel.photos[0].photo_reference)" alt="photo" class="hostelImg" />
+						<div class="feature-content d-flex align-items-center justify-content-between">
+							<div class="feature-title">
+								<h5 class="card-title">{{hotel.name}}</h5>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</template>
+	</div>
+</div>

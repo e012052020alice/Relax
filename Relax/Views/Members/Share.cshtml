@@ -1,0 +1,455 @@
+﻿@section Styles {
+    <style>
+        .modal {
+            z-index: 9999;
+        }
+
+        .shareImg {
+            width: 170px;
+            height: 170px;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .modalImg {
+            width: 400px;
+            height: 400px;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .feature-events-details-btn > a {
+            font-size: 16px;
+            width: 100px;
+            height: 45px;
+            bottom: 95px;
+            right: 30px;
+        }
+
+            .feature-events-details-btn > a:last-child {
+                font-size: 16px;
+                width: 100px;
+                height: 45px;
+                bottom: 30px;
+                right: 30px;
+            }
+
+        .date-map-area > a:last-child {
+            background-color: #7643ea;
+            width: auto;
+            color: #fff;
+        }
+    </style>
+}
+<div id="appShare">
+    @****** Breadcumb Area Start ******@
+    <div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg);background-repeat: repeat-y;">
+    </div>
+    @****** Breadcumb Area End ******@
+    <section class="dorne-features-events-area bg-img bg-overlay-9 section-padding-100-50" style="background-image: url(/relax/img/bg-img/hero-3.jpg)">
+        <div class="container-fluid w-75">
+            <div class="row" v-if="ShareArray.length == 0 && unShareArray.length == 0">
+                <div class="col-12">
+                    <div class="section-heading text-center">
+                        <span></span>
+                        <h4>尚未建立行程, <a asp-controller="AttractionsEdit" asp-action="Addtrips">新增行程</a></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row" v-else-if="ShareArray.length == 0">
+            </div>
+            <div class="row" v-else>
+                <div class="col-12">
+                    <div class="section-heading text-center">
+                        <span></span>
+                        <h4>已分享</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row h-100 align-items-center justify-content-center">
+
+                @* 已分享 *@
+                <div class="col-12 col-lg-6" v-for=" item in ShareArray">
+                    <div class="single-feature-events-area d-sm-flex align-items-center">
+                        <div class="feature-events-thumb">
+                            <img class="shareImg" v-bind:src="item.adImg" alt="">
+                            <div class="date-map-area d-flex" v-if="item.state == true">
+                                <a>分享中</a>
+                            </div>
+                        </div>
+                        <div class="feature-events-content">
+                            <a>分享時間 : {{item.startTime}} ~ {{item.endTime}}</a>
+                            <h5>{{item.tripName}}</h5>
+                            <h6>{{item.totalDays}}days</h6>
+                            <p class="adtDetailtext">{{item.detail}}</p>
+                        </div>
+                        <div class="feature-events-details-btn" v-if="item.state == true">
+                            <a href="javascript:void(0);" @@click="stopShare(item.adId)">停止分享</a>
+                            <a href="javascript:void(0);" @@click="editModal(item.tripId)">編輯分享</a>
+                        </div>
+                        <div class="feature-events-details-btn" v-else>
+                            <a href="javascript:void(0);" @@click="insertModal(item.tripId)">分享行程</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row" v-if="unShareArray.length == 0">
+            </div> 
+            <div class="row" v-else>
+                <div class="col-12">
+                    <div class="section-heading text-center">
+                        <span></span>
+                        <h4>未分享</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row h-100 align-items-center justify-content-center">
+
+                @* 未分享 *@
+                <div class="col-12 col-lg-6" v-for=" item in unShareArray">
+                    <div class="single-feature-events-area d-sm-flex align-items-center">
+                        <div class="feature-events-thumb">
+                            <img class="shareImg" src="~/images/temporaryimage.png" />
+                        </div>
+                        <div class="feature-events-content">
+                            <a>{{item.totalDays}}days</a>
+                            <h5>{{item.tripName}}</h5>
+                            <h6>{{item.name}}</h6>
+                        </div>
+                        <div class="feature-events-details-btn">
+                            <a href="javascript:void(0);" @@click="insertUnModal(item.tripId)">分享行程</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <template v-if="shareEdit==true">
+                        <h5 class="modal-title">編輯分享</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                    </template>
+                    <template v-else>
+                        <h5 class="modal-title">分享行程</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </template>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <template v-if="shareEdit==true">
+                            <div class="mb-3">
+                                <label class="form-label">分享人 : {{madalName}}</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">標題 : {{modalTripName}}</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">簡介:</label>
+                                <input type="text" class="form-control" v-model="modalDetail" />
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-6">
+                                    <label class="form-label">開始時間:</label>
+                                    <input type="date" class="form-control" v-model="modalStartTime" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">結束時間:</label>
+                                    <input type="date" class="form-control" v-model="modalEndTime" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">宣傳圖片:</label>
+                                <input type="text" class="form-control" v-model="modalImg" placeholder="請輸入圖片網址" v-on:change="isImg" />
+                            </div>
+                            <div class="mb-3 text-center" v-if="imgShow">
+                                <img :src="imgShow" alt="" class="modalImg">
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="mb-3">
+                                <label class="form-label">分享會員 : {{madalName}}</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">行程名稱 : {{modalTripName}}</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">簡介:</label>
+                                <input type="text" class="form-control" v-model="modalDetail" />
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-6">
+                                    <label class="form-label">開始時間:</label>
+                                    <input type="date" class="form-control" v-model="modalStartTime" @@change="dateChange" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">結束時間:</label>
+                                    <input type="date" class="form-control" v-model="modalEndTime" @@change="dateChange" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">宣傳圖片:</label>
+                                <input type="text" class="form-control" v-model="modalImg" placeholder="請輸入圖片網址" v-on:change="isImg" />
+                            </div>
+                            <div class="mb-3 text-center" v-if="imgShow">
+                                <img :src="imgShow" alt="" class="modalImg">
+                            </div>
+                        </template>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <template v-if="shareEdit==true">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" @@click="update">修改</button>
+                    </template>
+                    <template v-else>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" @@click="insert">新增</button>
+                    </template>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* Vue*@
+    <script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+    @* ajax *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        var baseAddress = "https://localhost:7238";
+        var vueApp = {
+            data() {
+                return {
+
+                    ShareArray: [],
+                    unShareArray: [],
+
+                    shareEdit: false,
+
+                    madalAdId: 0,
+                    madalTripId: 0,
+                    madalName: "",
+                    modalTripName: "",
+                    modalMemberId: "",
+                    modalDetail: "",
+                    modalStartTime: null,
+                    modalEndTime: null,
+                    modalImg: "",
+                    imgShow: "",
+                };
+            },
+            methods: {
+                showDTO: function () {
+                    let _this = this;
+                    _this.ShareArray = [];
+                    _this.unShareArray = [];
+                    axios.get(`${baseAddress}/api/Share`)
+                        .then(response => {
+                            var array = response.data;
+                            for (var i = 0; i < array.length; i++) {
+                                if (array[i].adId != null) {
+                                    array[i].startTime = array[i].startTime.split('T')[0];
+                                    array[i].endTime = array[i].endTime.split('T')[0];
+
+                                    var today = new Date();
+                                    var start = new Date(array[i].startTime);
+                                    var end = new Date(array[i].endTime);
+
+                                    array[i].state = today > start && today < end;
+                                    // array[i].myState = false;
+                                    // array[i]["state"] = false;
+
+                                    _this.ShareArray.push(array[i]);
+
+                                } else {
+                                    _this.unShareArray.push(array[i]);
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                insertUnModal: function (id) {
+                    var _this = this;
+
+                    _this.clearModal();
+                    _this.shareEdit = false;
+
+                    for (var i = 0; i < _this.unShareArray.length; i++) {
+                        if (_this.unShareArray[i].tripId == id) {
+                            _this.madalTripId = _this.unShareArray[i].tripId;
+                            _this.madalName = _this.unShareArray[i].name;
+                            _this.modalMemberId = _this.unShareArray[i].memberId;
+                            _this.modalTripName = _this.unShareArray[i].tripName;
+                            _this.modalDetail = "";
+                            _this.modalStartTime = null;
+                            _this.modalEndTime = null;
+                            _this.modalImg = "";
+                            _this.imgShow = "";
+                        }
+                    }
+                    $("#shareModal").modal("show");
+                },
+                insertModal: function (id) {
+                    var _this = this;
+
+                    _this.clearModal();
+                    _this.shareEdit = false;
+
+                    for (var i = 0; i < _this.ShareArray.length; i++) {
+                        if (_this.ShareArray[i].tripId == id) {
+                            _this.madalTripId = _this.ShareArray[i].tripId;
+                            _this.madalName = _this.ShareArray[i].name;
+                            _this.modalMemberId = _this.ShareArray[i].memberId;
+                            _this.modalTripName = _this.ShareArray[i].tripName;
+                            _this.modalDetail = _this.ShareArray[i].detail;
+                            _this.modalStartTime = _this.ShareArray[i].startTime;
+                            _this.modalEndTime = _this.ShareArray[i].endTime;
+                            _this.modalImg = _this.ShareArray[i].adImg;
+                            _this.imgShow = _this.ShareArray[i].adImg;
+                        }
+                    }
+                    $("#shareModal").modal("show");
+                },
+                insert: function () {
+                    var _this = this;
+                    var myShare = {
+                        tripId: _this.madalTripId,
+                        tripName: _this.modalTripName,
+                        memberId: _this.modalMemberId,
+                        startTime: _this.modalStartTime,
+                        endTime: _this.modalEndTime,
+                        adImg: _this.modalImg,
+                        detail: _this.modalDetail,
+                    };
+                    console.log(myShare);
+                    axios.post(`${baseAddress}/api/Share`, myShare)
+                        .then(response => {
+                            alert(response.data);
+                            $("#shareModal").modal("hide");
+
+                            _this.showDTO();
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                dateChange: function () {
+                    let _this = this;
+                    var start = _this.modalStartTime;
+                    var end = _this.modalEndTime;
+                    if (start != null && end != null) {
+                        if (start >= end) {
+                            alert("開始時間必須小於結束時間");
+                        }
+                    }
+                },
+                editModal: function (id) {
+                    var _this = this;
+
+                    _this.shareEdit = true;
+
+                    for (var i = 0; i < _this.ShareArray.length; i++) {
+                        if (_this.ShareArray[i].tripId == id) {
+                            _this.madalAdId = _this.ShareArray[i].adId;
+                            _this.madalTripId = _this.ShareArray[i].tripId;
+                            _this.madalName = _this.ShareArray[i].name;
+                            _this.modalMemberId = _this.ShareArray[i].memberId;
+                            _this.modalTripName = _this.ShareArray[i].tripName;
+                            _this.modalDetail = _this.ShareArray[i].detail;
+                            _this.modalStartTime = _this.ShareArray[i].startTime;
+                            _this.modalEndTime = _this.ShareArray[i].endTime;
+                            _this.modalImg = _this.ShareArray[i].adImg;
+                            _this.imgShow = _this.ShareArray[i].adImg;
+                        }
+                    }
+                    $("#shareModal").modal("show");
+                },
+                update: function () {
+                    var _this = this;
+                    var myShare = {
+                        adId: _this.madalAdId,
+                        StartTime: _this.modalStartTime,
+                        EndTime: _this.modalEndTime,
+                        AdImg: _this.modalImg,
+                        Detail: _this.modalDetail,
+                    };
+                    axios.put(`${baseAddress}/api/Share/${_this.madalAdId}`, myShare)
+                        .then(response => {
+                            alert(response.data);
+                            $("#shareModal").modal("hide");
+                            _this.showDTO();
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                isImg: function () {
+                    _this = this;
+                    const img = new Image();
+                    img.onload = function () {
+                        _this.imgShow = _this.modalImg;
+                    };
+                    img.onerror = function () {
+                        _this.imgShow = "";
+                    }
+                    img.src = _this.modalImg;
+                },
+                clearModal: function () {
+                    _this = this;
+                    _this.madalAdId = 0;
+                    _this.madalTripId = 0;
+                    _this.madalName = "";
+                    _this.modalTripName = "";
+                    _this.modalDetail = "";
+                    _this.modalStartTime = null;
+                    _this.modalEndTime = null;
+                    _this.modalImg = "";
+                    _this.imgShow = "";
+                },
+
+                stopShare: function (id) {
+                    let _this = this;
+                    var ret = confirm(`確定要停止分享嗎?`);
+                    if (ret == true) {
+                        var yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
+                        var myShare = {
+                            adId: id,
+                            endTime: yesterday,
+                        };
+                        axios.put(`${baseAddress}/api/Share/Stop`, myShare)
+                            .then(response => {
+                                // alert(response.data);
+                                $("#shareModal").modal("hide");
+                                _this.showDTO();
+                            })
+                            .catch(err => {
+                                alert(err);
+                            });
+
+                    }
+                }
+            },
+            mounted: function () {
+                let _this = this;
+                _this.showDTO();
+            }
+        };
+        var app = Vue.createApp(vueApp).mount("#appShare");
+    </script>
+}
+
+

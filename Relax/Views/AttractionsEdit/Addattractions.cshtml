@@ -1,0 +1,401 @@
+﻿@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"
+          integrity="sha256-FdatTf20PQr/rWg+cAKfl6j4/IY3oohFAJ7gVC3M34E=" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css">
+    <style>
+    </style>
+}
+<div id="app">
+    @****** Breadcumb Area Start ******@
+    <div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg);">
+    </div>
+    @****** Breadcumb Area End ******@
+
+    <section class="addattractions-area" style="background-image: url(/relax/img/bg-img/hero-3.jpg)">
+        <div class="container-fluid w-75">
+            <div class="container">
+                <div class="row attractions-box" v-for="(attr, i) in attrs" :key="i" :ref="`attr${i + 1}`">
+                    <!-- 表單區 -->
+                    <div class="col-8">
+                        <div class="attractions-search-group" style="margin-top:10px;">
+                            <div class="input-group">
+                                <input type="text" class="attractionsInput" placeholder="輸入景點" v-model="attr.attractionName" :ref="`attractionName${i + 1}`" :readonly="attr.isExisting">
+                            </div>
+                            <div v-if="attr.attractionNameError">
+                                <p class="text-danger">景點名稱為必填</p>
+                            </div>
+                            <div class="input-group mt-3">
+                                <input type="text" class="attractionsInput" placeholder="輸入描述" v-model="attr.description" :ref="`description${i + 1}`" :readonly="attr.isExisting">
+                            </div>
+                            <div v-if="attr.descriptionError">
+                                <p class="text-danger">景點描述為必填</p>
+                            </div>
+                            <div class="row mt-3 mb-3">
+                                <div class="col-5">
+                                    <div class="select2-container">
+                                        <select class="select2-multiple w-100" multiple="multiple" v-model="attr.tag" :ref="`tag${i + 1}`" data-width="100%" data-placeholder="選擇標籤" data-allow-clear="true" :disabled="attr.isExisting">
+                                            @foreach (var tag in ViewBag.Tags)
+                                            {
+                                                <option value="@tag.Value">@tag.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <span v-if="attr.tagError" class="text-danger">標籤為必選</span>
+                                </div>
+                                <div class="col-2">
+                                    <select class="custom-select " v-model="attr.timeCategory" :ref="`timeCategory${i + 1}`" :disabled="attr.isExisting">
+                                        <option selected>時段</option>
+                                        <option value="早上">早上</option>
+                                        <option value="午間">午間</option>
+                                        <option value="傍晚">傍晚</option>
+                                        <option value="全天">全天</option>
+                                    </select>
+                                    <span v-if="attr.timeCategoryError" class="text-danger">時段為必選</span>
+                                </div>
+                                <div class="col-3">
+                                    <select class="custom-select" v-model="attr.estimatedStayTime" :ref="`estimatedStayTime${i + 1}`" :disabled="attr.isExisting">
+                                        <option selected>預計停留時間</option>
+                                        <option value="30">30分鐘</option>
+                                        <option value="60">60分鐘</option>
+                                        <option value="90">90分鐘</option>
+                                        <option value="120">120分鐘</option>
+                                        <option value="150">150分鐘</option>
+                                        <option value="180">180分鐘</option>
+                                        <option value="210">210分鐘</option>
+                                        <option value="240">240分鐘</option>
+                                    </select>
+                                    <span v-if="attr.estimatedStayTimeError" class="text-danger">預計停留時間為必選</span>
+                                </div>
+                                <div class="col-2">
+                                    <select class="custom-select" v-model="attr.city" :ref="`city${i + 1}`" :disabled="attr.isExisting">
+                                        <option selected>縣市</option>
+                                        <option value="高雄">高雄市</option>
+                                    </select>
+                                    <div v-if="attr.cityError" class="text-danger">縣市為必選</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div v-if="attr.isExisting" class="text-danger">已有此景點</div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- 地圖區 -->
+                    <div class="col-4" style="padding-right:0px">
+                        <!-- 使用唯一ID -->
+                        <div class="attractions-map-container" :id="`map${i + 1}`"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <button type="button" class="btn dorne-btn m-3" v-on:click="morerow">更多</button>
+                    <button type="button" class="btn dorne-btn m-3" v-on:click="apiPost">新增景點</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"
+            integrity="sha256-AFAYEOkzB6iIKnTYZOdUf9FFje6lOTYdwRJKwTN5mks=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=myApiKey&callback=initMaps&libraries=places"></script>
+
+
+    <script>
+        function initMap(containerId, lat, lng) {
+            console.log(`Initializing map for container: ${containerId}`);
+            var container = document.getElementById(containerId);
+            if (container) {
+                var location = { lat: lat || 22.640546951893487, lng: lng || 120.30261518229459 };
+                var map = new google.maps.Map(container, {
+                    zoom: 16,
+                    center: location
+                });
+
+                var marker = new google.maps.Marker({
+                    position: location,
+                    map: map
+                });
+
+                return map; // Return the map instance
+            } else {
+                console.error(`Container not found: ${containerId}`);
+            }
+        }
+
+        function initMaps() {
+            console.log('Google Maps API initialized');
+            if (vueApp && vueApp.initAllMaps) {
+                vueApp.initAllMaps();
+            }
+        }
+
+        var vueApp = {
+            data() {
+                return {
+                    attrs: [
+                        { attractionName: "", city: "縣市", description: "", tag: [], timeCategory: "時段", estimatedStayTime: "預計停留時間", xCoordinate: "", yCoordinate: "", isApproved: true, mapInstance: null, isExisting: false, attractionNameError: false, descriptionError: false, tagError: false, timeCategoryError: false, estimatedStayTimeError: false, cityError: false }
+                    ]
+                }
+            },
+            methods: {
+                morerow: function () {
+                    this.attrs.push({ attractionName: "", city: "縣市", description: "", tag: [], timeCategory: "時段", estimatedStayTime: "預計停留時間", xCoordinate: "", yCoordinate: "", isApproved: true, mapInstance: null, isExisting: false });
+                    this.$nextTick(() => {
+                        let length = this.attrs.length;
+                        let map = initMap(`map${length}`);
+                        this.attrs[length - 1].mapInstance = map;
+                        this.initAutocomplete(`attractionName${length}`, length - 1);
+                        this.initAllSelect2();
+                    });
+                },
+                initAutocomplete: function (ref, index) {
+                    let input = this.$refs[ref][0];
+                    let options = { componentRestrictions: { country: 'tw' } };
+                    let autocomplete = new google.maps.places.Autocomplete(input, options);
+                    autocomplete.addListener('place_changed', () => {
+                        let place = autocomplete.getPlace();
+                        if (place.geometry) {
+                            let searchCenter = place.geometry.location;
+                            this.attrs[index].yCoordinate = searchCenter.lat();
+                            this.attrs[index].xCoordinate = searchCenter.lng();
+
+                            // 只保留景點名稱部分
+                            let addressComponents = place.address_components;
+                            let nameComponent = addressComponents.find(component => component.types.includes('establishment'));
+                            if (nameComponent) {
+                                this.attrs[index].attractionName = nameComponent.long_name;
+                            } else {
+                                this.attrs[index].attractionName = place.name;
+                            }
+
+                            // 更新地圖位置和標記
+                            this.attrs[index].mapInstance.setCenter(searchCenter);
+                            new google.maps.Marker({
+                                position: searchCenter,
+                                map: this.attrs[index].mapInstance
+                            });
+
+                            // 檢查景點是否已存在
+                            this.checkIfAttractionExists(this.attrs[index].attractionName, index);
+                        }
+                    });
+                },
+                checkIfAttractionExists: function (attractionName, index) {
+                    axios.get(`/AttractionsEdit/SearchAttractionByName?name=${attractionName}`)
+                        .then(response => {
+                            if (response.data.length > 0) {
+                                let attraction = response.data[0];
+                                this.attrs[index].city = attraction.city;
+                                this.attrs[index].description = attraction.description;
+                                this.attrs[index].tag = attraction.tag.split(',');
+                                this.attrs[index].timeCategory = attraction.timeCategory;
+                                this.attrs[index].estimatedStayTime = attraction.estimatedStayTime;
+                                this.attrs[index].isExisting = true;
+                                this.$nextTick(() => {
+                                    this.initAllSelect2();
+                                });
+                            } else {
+                                this.attrs[index].isExisting = false;
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error checking if attraction exists: ", error);
+                        });
+                },
+                initSelect2: function (ref) {
+                    this.$nextTick(() => {
+                        let select = this.$refs[ref][0];
+                        $(select).select2({
+                            theme: 'bootstrap4',
+                            placeholder: $(select).data('placeholder'),
+                            allowClear: Boolean($(select).data('allow-clear')),
+                            closeOnSelect: !$(select).attr('multiple')
+                        }).on('change', () => {
+                            let index = parseInt(ref.replace('tag', '')) - 1;
+                            this.attrs[index].tag = $(select).val() || [];
+                        });
+                    });
+                },
+                apiPost: function () {
+                    let _this = this;
+                    let time = 2000;
+                    let promises = [];
+                    let hasError = false; // 用來標記是否有錯誤
+
+                    for (let i = 0; i < _this.attrs.length; i++) {
+                        let item = _this.attrs[i];
+                        let des = item["description"];
+                        let isApproved = item["isApproved"];
+                        let isValid = true;
+
+                        // 重置錯誤狀態
+                        item.attractionNameError = false;
+                        item.descriptionError = false;
+                        item.tagError = false;
+                        item.timeCategoryError = false;
+                        item.estimatedStayTimeError = false;
+                        item.cityError = false;
+
+                        // 檢查必填欄位
+                        if (!item.attractionName) {
+                            item.attractionNameError = true;
+                            isValid = false;
+                        }
+                        if (!item.description) {
+                            item.descriptionError = true;
+                            isValid = false;
+                        }
+                        if (!item.tag.length) {
+                            item.tagError = true;
+                            isValid = false;
+                        }
+                        if (!item.timeCategory || item.timeCategory === "時段") {
+                            item.timeCategoryError = true;
+                            isValid = false;
+                        }
+                        if (!item.estimatedStayTime || item.estimatedStayTime === "預計停留時間") {
+                            item.estimatedStayTimeError = true;
+                            isValid = false;
+                        }
+                        if (!item.city || item.city === "縣市") {
+                            item.cityError = true;
+                            isValid = false;
+                        }
+
+                        if (isValid && des != "" && des != undefined && !item.isExisting) { // 只處理不存在的景點
+                            promises.push(new Promise(function (resolve, reject) {
+                                setTimeout(function () {
+                                    _this.apiRequest(des, i);
+                                    resolve();
+                                }, i * time);
+                            }));
+                        } else if (!isValid) {
+                            hasError = true; // 設置錯誤標記
+                        } else {
+                            console.log(`${i}不需要敏感詞偵測或景點已存在或欄位未填寫`);
+                        }
+                    }
+
+                    if (hasError) {
+                        // window.alert("請填寫所有必填欄位");
+                        return; // 有錯誤時直接返回，不繼續執行
+                    }
+
+                    Promise.all(promises).then(function () {
+                        return new Promise(function (resolve, reject) {
+                            setTimeout(function () {
+                                resolve();
+                            }, _this.attrs.length * time);
+                        });
+                    }).then(function () {
+                        for (let i = 0; i < _this.attrs.length; i++) {
+                            if (!_this.attrs[i].isExisting && !_this.attrs[i].attractionNameError && !_this.attrs[i].descriptionError && !_this.attrs[i].tagError && !_this.attrs[i].timeCategoryError && !_this.attrs[i].estimatedStayTimeError && !_this.attrs[i].cityError) {
+                                _this.addToSql(_this.attrs[i]);
+                            }
+                        }
+                    }).then(function () {
+                        // 新增成功後顯示提示框，並刷新頁面
+                        window.alert("新增成功");
+                        // location.reload(); // 刷新頁面
+                    }).catch(function (error) {
+                        console.error(error);
+                    });
+                },
+                apiRequest: function (data, index) {
+                    const endpoint = "https://alexwu-20240523.cognitiveservices.azure.com/";
+                    const key = "367120c3fbc44b5fa3560f137d7b59d8";
+                    const uri = `${endpoint}contentsafety/text:analyze?api-version=2023-10-01`;
+                    let word = data;
+                    let body = {
+                        text: data,
+                        categories: [
+                            "Hate", "Sexual", "SelfHarm", "Violence"
+                        ],
+                        haltOnBlocklistHit: false,
+                        outputType: "FourSeverityLevels"
+                    };
+                    axios.post(uri, body, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Ocp-Apim-Subscription-Key": key
+                        }
+                    }).then(Response => {
+                        console.log(Response.data);
+                        let data = Response.data;
+                        let hate = data["categoriesAnalysis"][0]["severity"];
+                        let sexual = data["categoriesAnalysis"][1]["severity"];
+                        let selfharm = data["categoriesAnalysis"][2]["severity"];
+                        let violence = data["categoriesAnalysis"][3]["severity"];
+                        this.sensitive = hate + sexual + selfharm + violence;
+                        console.log(`${word}:${hate}+${sexual}+${selfharm}+${violence}=${this.sensitive}`);
+                        let wordN = (this.sensitive) ? `${word} *` : `${word}`;
+                        console.log(wordN);
+                        if (wordN.includes(" *")) {
+                            if (word == this.attrs[index].description) {
+                                this.attrs[index] = Object.assign({}, this.attrs[index], { description: wordN, isApproved: false });
+                            }
+                        }
+                    }).catch(err => console.log(err));
+                },
+                addToSql: function (body) {
+                    // 克隆對象並在發送前刪除 mapInstance 屬性
+                    let sanitizedBody = { ...body };
+                    sanitizedBody.tag = sanitizedBody.tag.join(',');
+                    sanitizedBody.xCoordinate = Math.floor(body.xCoordinate * 100000);
+                    sanitizedBody.yCoordinate = Math.floor(body.yCoordinate * 100000);
+
+                    delete sanitizedBody.mapInstance;
+
+                    axios.post('https://localhost:7238/AttractionsEdit/PostAttractions', sanitizedBody, {
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }).then(response => {
+                        console.log(response.data);
+                    }).catch(err => console.log(err));
+                },
+                initAllAutocompletes: function () {
+                    console.log('Initializing all autocompletes');
+                    this.attrs.forEach((_, i) => {
+                        this.$nextTick(() => {
+                            this.initAutocomplete(`attractionName${i + 1}`, i);
+                        });
+                    });
+                },
+                initAllMaps: function () {
+                    console.log('Initializing all maps');
+                    this.attrs.forEach((_, i) => {
+                        this.$nextTick(() => {
+                            console.log(`Initializing map for: map${i + 1}`);
+                            let map = initMap(`map${i + 1}`);
+                            this.attrs[i].mapInstance = map; // Store the map instance
+                        });
+                    });
+                },
+                initAllSelect2: function () {
+                    console.log('Initializing all Select2');
+                    this.attrs.forEach((_, i) => {
+                        this.$nextTick(() => {
+                            this.initSelect2(`tag${i + 1}`);
+                        });
+                    });
+                },
+            },
+            mounted() {
+                window.onload = () => {
+                    console.log('Window loaded, initializing all maps and autocompletes');
+                    this.initAllMaps();
+                    this.initAllAutocompletes();
+                };
+                this.initAllSelect2();
+            },
+        }
+
+        var app = Vue.createApp(vueApp).mount('#app');
+    </script>
+}

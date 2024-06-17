@@ -1,0 +1,51 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="section-heading text-center">
+                <span></span>
+                <h4>活動推薦</h4>
+                <p>近期內舉辦的推薦活動</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <template v-if="acGoLength==1">
+            <div class="col-2"></div>
+            <div class="col-8" style="width: auto; height: 400px;" v-for="acgo in acGoArray">
+                @* <div class="single-editors-pick-area wow fadeInUp " data-wow-delay="0.2s"> *@
+                <img v-bind:src="acgo.image" alt="" class="acImg">
+                <div class="editors-pick-info">
+                    <div class="places-total-destinations ">
+                        <a href="#">{{acgo.title}}</a>
+                        <a href="#">{{acgo.detail}}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2"></div>
+        </template>
+        <template v-if="acGoLength==2">
+            <div class="col-6" style="width: 540px; height: 400px;" v-for="acgo in acGoArray">
+                @* <div class="single-editors-pick-area wow fadeInUp " data-wow-delay="0.2s"> *@
+                <img v-bind:src="acgo.image" alt="" class="acImg">
+                <div class="editors-pick-info">
+                    <div class="places-total-destinations ">
+                        <a href="#">{{acgo.title}}</a>
+                        <a href="#">{{acgo.detail}}</a>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template v-if="acGoLength==3">
+            <div class="col-4" style="width: 300px; height: 300px;" v-for="acgo in acGoArray">
+                @* <div class="single-editors-pick-area wow fadeInUp " data-wow-delay="0.2s"> *@
+                <img v-bind:src="acgo.image" alt="" class="acImg">
+                <div class="editors-pick-info">
+                    <div class="places-total-destinations ">
+                        <a href="#" class="text-center">{{acgo.title}}</a>
+                        <a href="#" class="text-center">{{acgo.detail}}</a>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>

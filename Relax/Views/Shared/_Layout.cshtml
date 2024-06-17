@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    @* 上述 4 個元標記*必須*位於頭部的第一位； 任何其他頭部內容必須位於這些標籤的*之後 *@
+
+    @* 標題 *@
+    <title>@ViewData["Title"] - Relax</title>
+    @* 網站圖示 *@
+    <link rel="icon" href="/favicon.ico">
+    @* 核心樣式表 *@
+    @* <link href="/relax/style.css" rel="stylesheet" asp-append-version="true"> *@
+    <link href="/relax/relaxstyle.css" rel="stylesheet" asp-append-version="true" />
+    @* 響應式 CSS *@
+    <link href="~/relax/css/responsive/responsive.css" rel="stylesheet" asp-append-version="true">
+    @* 其他 *@
+    @* <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
+    @* bootstrap icon *@
+    @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" asp-append-version="true"> *@
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    @* 入口動畫 *@
+    <div id="preloader">
+        <div class="relax-load"></div>
+    </div>
+
+    @* ***** 導覽列開始 ***** *@
+    <header class="header_area" id="header">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <div class="col-12 h-100">
+                    <nav class="h-100 navbar navbar-expand-lg">
+                        <partial name="_LoginPartial" />
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    @* ***** 導覽列結束 ***** *@
+
+    @RenderBody()
+
+    <!-- ****** Footer Area Start ****** -->
+    <footer class="dorne-footer-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 d-md-flex align-items-center justify-content-between">
+                    <div class="footer-text">
+                        <p>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Distributed by 旅Next <i class="fa fa-heart-o" aria-hidden="true"></i>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        </p>
+                    </div>
+                    @* <div class="footer-social-btns">
+                        <a href="#"><i class="fa fa-linkedin" aria-haspopup="true"></i></a>
+                        <a href="#"><i class="fa fa-behance" aria-hidden="true"></i></a>
+                        <a href="#"><i class="fa fa-dribbble" aria-hidden="true"></i></a>
+                        <a href="#"><i class="fa fa-twitter" aria-haspopup="true"></i></a>
+                        <a href="#"><i class="fa fa-facebook" aria-haspopup="true"></i></a>
+                    </div> *@
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- ****** Footer Area End ****** -->
+
+    @* jQuery-2.2.4 js *@
+    <script src="~/relax/js/jquery/jquery-2.2.4.min.js" asp-append-version="true"></script>
+    @* Popper js *@
+    <script src="~/relax/js/bootstrap/popper.min.js" asp-append-version="true"></script>
+    @* Bootstrap-4 js *@
+    <script src="~/relax/js/bootstrap/bootstrap.min.js" asp-append-version="true"></script>
+    @* plugins js *@
+    <script src="~/relax/js/others/plugins.js" asp-append-version="true"></script>
+    @* Active JS *@
+    <script src="~/relax/js/active.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @* 其他 *@
+    @* <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script> *@
+    @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script> *@
+    @* <script src="~/js/site.js" asp-append-version="true"></script> *@ 
+</body>
+</html>

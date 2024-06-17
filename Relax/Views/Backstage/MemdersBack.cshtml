@@ -1,0 +1,281 @@
+﻿@section Styles {
+	<style>
+		thead {
+			width: 100%;
+			background-color: #7643ea;
+			color: #fff;
+		}
+
+		.table-striped tbody tr:nth-of-type(odd) {
+			background-color: #fbf9ff;
+		}
+
+		.table-hover tbody tr:hover {
+			background-color: #f3edff
+		}
+
+		.tableDorne-btn {
+			height: 35px;
+			background-color: #7643ea;
+			border-radius: 0;
+			color: #fff;
+			margin-right: 15px;
+			font-weight: 600;
+			font-size: 15px;
+			-webkit-transition-duration: 500ms;
+			transition-duration: 500ms;
+		}
+
+			.tableDorne-btn:hover, .tableDorne-btn:focus {
+				color: #fff;
+				background-color: #5d25dd;
+				font-weight: 600;
+			}
+	</style>
+}
+
+
+@****** Breadcumb Area Start ******@
+<div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg)">
+</div>
+@****** Breadcumb Area End ******@
+@****** Contact Area Start ******@
+<div class="dorne-features-destinations-area" id="contact">
+	<div id="appUser" class="container-fluid" style="width:75%">
+
+		<div class="row">
+			@* 新增按鈕 *@
+			<div class="col-md-6 form-group ">
+				<a asp-area="Identity" asp-page="/Account/Register" class="btn dorne-btn"> + 新增會員</a>
+			</div>
+			@* 篩選 *@
+			<div class="col-md-6 form-group pt-3 d-flex justify-content-end">
+				<div style="width:500px">
+					<input class="form-control" v-model="filter" placeholder="按Enter搜尋" v-on:keyup.enter="filterDTO" />
+				</div>
+			</div>
+		</div>
+		@* 表格 *@
+		<div class="row">
+			<table class="table table-striped table-hover text-center">
+				<thead>
+					<tr>
+						<td>會員編號</td>
+						<td>會員帳號</td>
+						<td>會員權限</td>
+						<td>會員暱稱</td>
+						<td>會員性別</td>
+						<td>會員生日</td>
+						<td>會員信箱</td>
+						<td></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="userDTO in userArray">
+						<template v-if="userDTO.edit == true">
+							<td><label>{{userDTO.id}}</label></td>
+							<td><input v-model="userDTO.userName" style="width:130px"/></td>
+							<td>
+								<select v-model="userDTO.roleName">
+									<option v-for="role in roleArray" :value="role.roleName">{{role.chinese}}</option>
+								</select>
+							</td>
+							<td><input v-model="userDTO.name" style="width:110px" /></td>
+							<td>
+								<select v-model="userDTO.gender">
+									<option>男</option>
+									<option>女</option>
+								</select>
+							</td>
+							<td><input type="date" v-model="userDTO.birthDay"  /></td>
+							<td><input v-model="userDTO.email" style="width:210px" /></td>
+							<td>
+								<button type="button" class="btn tableDorne-btn" @@click="update(userDTO)">修改</button>
+								<button type="button" class="btn tableDorne-btn" @@click="cancel(userDTO.id)">取消</button>
+							</td>
+						</template>
+						@* 顯示範本 *@
+						<template v-else>
+							<td><label>{{userDTO.id}}</label></td>
+							<td><label>{{userDTO.userName}}</label></td>
+							<td><label>{{userDTO.chinese}}</label></td>
+							<td><label>{{userDTO.name}}</label></td>
+							<td><label>{{userDTO.gender}}</label></td>
+							<td><label>{{userDTO.birthDay}}</label></td>
+							<td><label>{{userDTO.email}}</label></td>
+							<td>
+								<button type="button" class="btn tableDorne-btn" @@click="edit(userDTO.id)">編輯</button>
+								<button type="button" class="btn tableDorne-btn" @@click="delUser(userDTO.id)">刪除</button>
+							</td>
+						</template>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts {
+	@* Vue *@
+	<script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+	@* ajax *@
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<script>
+		var baseAddress = "https://localhost:7238";
+		var vueApp = {
+			data() {
+				return {
+
+					filter: "",
+					userArrayOld: [],
+					userArray: [],
+					roleArray:[],
+				}
+			},
+			methods: {
+				filterDTO: function () {
+					let _this = this;
+					var myUser = {};
+
+					myUser.id = myUser.userName = myUser.name = myUser.gender = myUser.email = _this.filter;
+
+					axios.post(`${baseAddress}/api/Users/Fliter`, myUser)
+						.then(response => {
+
+							_this.userArray = response.data;
+							for (var i = 0; i < _this.userArray.length; i++) {
+								_this.userArray[i].edit = false;
+							}
+							_this.getchinese(_this.userArray);
+
+						})
+						.catch(err => {
+							alert(err);
+						});
+				},
+				update: function (userDTO) {
+					var _this = this;
+
+					userDTO.userName = userDTO.userName.trim();;
+					userDTO.email = userDTO.email.trim();;
+
+					var myUser = {
+						id: userDTO.id,
+						userName: userDTO.userName,
+						roleName: userDTO.roleName,
+						name: userDTO.name,
+						gender: userDTO.gender,
+						birthDay: userDTO.birthDay,
+						email: userDTO.email,
+						points: userDTO.points,
+					};
+
+					axios.put(`${baseAddress}/api/Users/${userDTO.id}`, myUser)
+						.then(response => {
+							alert(response.data)
+							if (response.data === "修改成功") {
+								_this.filterDTO();
+							}
+						})
+						.catch(err => {
+							alert(err);
+						});
+				},
+				cancel: function (userid) {
+					let _this = this;
+
+					for (var i = 0; i < _this.userArray.length; i++) {
+						var item = _this.userArray[i];
+						if (item.edit == true && userid == item.id) {
+							item.edit = false;
+							for (var n = 0; n < _this.userArrayOld.length; n++) {
+								var itemOld = _this.userArrayOld[n];
+								if (userid == itemOld.idOld) {
+									item.userName = itemOld.userNameOld;
+									item.name = itemOld.nameOld;
+									item.gender = itemOld.genderOld;
+									item.birthDay = itemOld.birthDayOld;
+									item.email = itemOld.emailOld;
+									item.points = itemOld.pointsOld;
+								}
+							}
+						}
+					}
+				},
+				edit: function (userid) {
+					let _this = this;
+					_this.getRole();
+					for (var i = 0; i < _this.userArray.length; i++) {
+						var item = _this.userArray[i];
+						if (item.edit == false && userid == item.id) {
+							item.edit = true;
+							var oldValues = {
+								idOld: item.id,
+								userNameOld: item.userName,
+								nameOld: item.name,
+								genderOld: item.gender,
+								birthDayOld: item.birthDay,
+								emailOld: item.email,
+								pointsOld: item.points
+							};
+							_this.userArrayOld.push(oldValues);
+						}
+					}
+				},
+				delUser: function (userid) {
+					let _this = this;
+
+					var delUser = _this.userArray.find(user => user.id === userid);
+					var ret = confirm(`確定刪除 ${delUser.userName} 的資料?`)
+					if (ret == true) {
+						axios.delete(`${baseAddress}/api/Users/${userid}`)
+							.then(response => {
+								alert(response.data);
+								_this.filterDTO();
+							})
+							.catch(err => {
+								alert(err);
+							});
+					}
+				},
+				getRole: function () {
+					let _this = this;
+
+					axios.post(`${baseAddress}/api/Users/Role`)
+						.then(response => {
+
+							_this.roleArray = response.data;
+							_this.getchinese(_this.roleArray);
+						})
+						.catch(err => {
+							alert(err);
+						});
+				},
+				getchinese: function (roleArray) {
+					const roleTranslations = {	
+						"Member": "會員",
+						"Suspension": "停權",
+						"Staff": "管理者"
+					};
+					for (const role of roleArray) {
+						if (role.roleName in roleTranslations) {
+							role.chinese = roleTranslations[role.roleName];
+						}
+					};
+				},
+				test:function(){
+
+					let _this = this;
+					console.log()
+				}
+			},
+			mounted: function () {
+				let _this = this;
+				_this.filterDTO();
+			}
+		};
+		var app = Vue.createApp(vueApp).mount("#appUser");
+	</script>
+}

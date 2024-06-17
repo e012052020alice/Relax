@@ -1,0 +1,78 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+@section Styles {
+    <style>
+        .bg-img {
+            height: 1150px;
+            width: auto;
+        }
+
+        .contact-form {
+            padding: 40px 30px;
+        }
+    </style>
+}
+
+<section class="dorne-welcome-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg);">
+    <div class="container-fluid w-75">
+        <div class="row h-100 align-items-center justify-content-center" style=" padding-top:160px">
+            <div class="col-12 col-md-6 py-4">
+                @* <h1 class="trans">@ViewData["Title"]</h1> *@
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="contact-form">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="form-floating mb-3">
+                        <label asp-for="Input.Name">@Html.DisplayNameFor(a => a.Input.Name)</label>
+                        <span asp-validation-for="Input.Name" class="text-danger"></span>
+                        <input asp-for="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="name" />
+                    </div>
+                    <div class="form-floating mb-3 ">
+                        <label asp-for="Input.UserName">@Html.DisplayNameFor(a => a.Input.UserName)</label>
+                        <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                        <input asp-for="Input.UserName" class="form-control" autocomplete="UserName" aria-required="true" placeholder="UserName" />
+                    </div>
+                    <div class="form-floating mb-3 row">
+                        <div class="col-6">
+                            <label asp-for="Input.Gender">@Html.DisplayNameFor(a => a.Input.Gender)</label>
+                            <span asp-validation-for="Input.Gender" class="text-danger"></span>
+                            <select asp-for="Input.Gender" class="form-control" style="height:50px" autocomplete="Gender" aria-required="true" placeholder="Gender">
+                                <option>男</option>
+                                <option>女</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Input.BirthDay">@Html.DisplayNameFor(a => a.Input.BirthDay)</label>
+                            <span asp-validation-for="Input.BirthDay" class="text-danger"></span>
+                            <input type="date" asp-for="Input.BirthDay" class="form-control" autocomplete="BirthDay" aria-required="true" placeholder="BirthDay" />
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <label asp-for="Input.Email">@Html.DisplayNameFor(a => a.Input.Email)</label>
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        <input asp-for="Input.Email" class="form-control" autocomplete="email" aria-required="true" placeholder="name@example.com" />
+                    </div>
+                    <div class="form-floating mb-3">
+                        <label asp-for="Input.Password">@Html.DisplayNameFor(a => a.Input.Password)</label>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    </div>
+                    <div class="form-floating mb-3">
+                        <label asp-for="Input.ConfirmPassword">@Html.DisplayNameFor(a => a.Input.ConfirmPassword)</label>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    </div>
+                    <div class="text-center">
+                        <button id="registerSubmit" type="submit" class="btn dorne-btn mt-4">註冊</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

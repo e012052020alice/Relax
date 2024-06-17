@@ -1,0 +1,255 @@
+/*!**************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/pages/home.scss ***!
+  \**************************************************************************************************************/
+.home {
+  display: flex;
+  position: relative;
+}
+.home .dateTime {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust the gap between text and DateTimePicker if necessary */
+  padding-bottom: 50px;
+}
+.home .homeContainer {
+  flex: 6;
+  margin-top: 60px;
+}
+.home .homeContainer .widgets, .home .homeContainer .charts, .home .homeContainer .dateTime {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+.home .homeContainer .charts {
+  padding: 5px 20px;
+  border-radius: 10px;
+}
+.home .homeContainer .tables {
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px 3px rgba(201, 194, 227, 0.3);
+  -webkit-box-shadow: 5px 5px 5px 3px rgba(201, 194, 227, 0.3);
+  padding: 20px;
+  margin: 20px;
+}
+.home .homeContainer .tables .tableTitle {
+  font-weight: 500;
+  color: gray;
+  margin-bottom: 15px;
+}
+/*!********************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/dateTimePicker/dateTimePicker.scss ***!
+  \********************************************************************************************************************************************/
+.dateTimePicker {
+  position: relative;
+}
+.dateTimePicker input {
+  width: 200px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.dateTimePicker .pickerOverlay {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin-top: 8px;
+}
+.dateTimePicker .pickerOverlay .rdrDefinedRangesWrapper {
+  width: 300px;
+}
+.dateTimePicker .pickerOverlay .rdrDateRangeWrapper {
+  width: 700px;
+}
+.dateTimePicker .pickerOverlay .rdrMonthAndYearPickers {
+  display: flex;
+  justify-content: space-between;
+}
+.dateTimePicker .pickerOverlay .rdrMonthPicker,
+.dateTimePicker .pickerOverlay .rdrYearPicker {
+  width: auto;
+}
+.dateTimePicker .pickerOverlay .rdrDay {
+  line-height: 1.5;
+}
+/*!****************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/Widget/widget.scss ***!
+  \****************************************************************************************************************************/
+.widget {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  padding: 10px;
+  box-shadow: 5px 5px 5px 3px rgba(201, 194, 227, 0.3);
+  -webkit-box-shadow: 5px 5px 5px 3px rgba(201, 194, 227, 0.3);
+  border-radius: 10px;
+  height: 100px;
+}
+.widget .left, .widget .right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.widget .left .title, .widget .right .title {
+  font-weight: bold;
+  font-size: 14px;
+  color: rgb(78, 72, 97);
+}
+.widget .left .counter, .widget .right .counter {
+  font-size: 28px;
+  font-weight: 300;
+}
+.widget .left .link, .widget .right .link {
+  width: max-content;
+  font-size: 12px;
+  border-bottom: 1px solid gray;
+}
+.widget .left .precentage, .widget .right .precentage {
+  display: flex;
+  align-items: center;
+  font: 14px;
+}
+.widget .left .precentage.positive, .widget .right .precentage.positive {
+  color: green;
+}
+.widget .left .precentage.negative, .widget .right .precentage.negative {
+  color: red;
+}
+.widget .left .icon, .widget .right .icon {
+  font: 18px;
+  padding: 5px;
+  background-color: rgb(224, 215, 255);
+  border-radius: 5px;
+  align-self: flex-end;
+}
+/*!*****************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/charts/mainChart/mainchart.scss ***!
+  \*****************************************************************************************************************************************/
+.mainchart {
+  flex: 5;
+  box-shadow: 5px 5px 5px 3px rgba(201, 194, 227, 0.3);
+  -webkit-box-shadow: 5px 5px 5px 3px rgba(201, 194, 227, 0.3);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.mainchart .title {
+  margin-top: 5px;
+  margin-left: 8px;
+  color: gray;
+}
+.mainchart .chartGrid {
+  stroke: rgb(228, 225, 225);
+}
+/*!***************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/charts/desChart/deschart.scss ***!
+  \***************************************************************************************************************************************/
+.deschart {
+  flex: 2;
+  padding: 15px;
+  box-shadow: 5px 5px 5px 3px rgba(201, 194, 227, 0.3);
+  -webkit-box-shadow: 5px 5px 5px 3px rgba(201, 194, 227, 0.3);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+.deschart .top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgb(105, 102, 114);
+}
+.deschart .top .title {
+  font-size: 16px;
+  font-weight: 500;
+}
+.deschart .bottom {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex: 1;
+}
+.deschart .bottom .simplechart {
+  width: 100px;
+  height: 100px;
+}
+.deschart .bottom .title {
+  font-weight: 500;
+  color: gray;
+}
+.deschart .bottom .amount {
+  font-style: 30px;
+}
+.deschart .bottom .desc {
+  font-weight: 300;
+  font-style: 12px;
+  color: gray;
+  text-align: center;
+}
+.deschart .bottom .summary {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.deschart .bottom .summary .item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.deschart .bottom .summary .item .itemTitle {
+  font-size: 14px;
+  color: gray;
+  margin-right: 5px;
+}
+.deschart .bottom .summary .item .itemResult {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin-left: 10px;
+}
+.deschart .bottom .summary .item .itemResult.positive {
+  color: green;
+}
+.deschart .bottom .summary .item .itemResult.negative {
+  color: red;
+}
+.deschart .bottom .summary .item .resultAmount {
+  margin-left: 10px;
+}
+/*!*******************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/tables/basicTable/basicTable.scss ***!
+  \*******************************************************************************************************************************************/
+@charset "UTF-8";
+.basicTable {
+  /* 奇数行背景色 */
+  /* 鼠标悬停时背景色 */
+}
+.basicTable .tHead {
+  background-color: #5151A2;
+  color: #fff;
+  font-weight: 500;
+}
+.basicTable tbody tr:nth-of-type(odd) {
+  background-color: #fbf9ff;
+}
+.basicTable tbody tr:hover {
+  background-color: #ededfc;
+}
+/*!********************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/Sildebar/Slidebar.scss ***!
+  \********************************************************************************************************************************/
+

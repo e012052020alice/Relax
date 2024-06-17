@@ -1,0 +1,457 @@
+﻿@section Styles {
+    <style>
+
+        .modal {
+            z-index: 9999;
+        }
+
+        thead {
+            background-color: #7643ea;
+            color: #fff;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #fbf9ff;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f3edff;
+        }
+
+        .tableDorne-btn {
+            height: 35px;
+            background-color: #7643ea;
+            border-radius: 0;
+            color: #fff;
+            margin-right: 15px;
+            font-weight: 600;
+            font-size: 15px;
+            -webkit-transition-duration: 500ms;
+            transition-duration: 500ms;
+        }
+
+            .tableDorne-btn:hover, .tableDorne-btn:focus {
+                color: #fff;
+                background-color: #5d25dd;
+                font-weight: 600;
+            }
+
+        .inputDate {
+            margin-right: 10px;
+        }
+
+        .shareImg {
+            width: 170px;
+            height: 170px;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .modalImg {
+            width: 400px;
+            height: 400px;
+            object-fit: cover;
+            object-position: center;
+        }
+    </style>
+}
+
+<div id="appAD">
+    @****** Breadcumb Area Start ******@
+    <div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg)">
+    </div>
+    @****** Breadcumb Area End ******@
+    @****** Contact Area Start ******@
+    <div class="dorne-features-destinations-area" id="contact">
+        <div class="container-fluid" style="width:75%">
+            <div class="row">
+                @* 新增按鈕 *@
+                <div class="col-md-6 form-group ">
+                    <button type="button" class="btn dorne-btn" @@click="insertModal"> + 新增分享</button>
+                </div>
+                @* 篩選 *@
+                <div class="col-md-6 form-group pt-3 d-flex justify-content-end">
+                    <div>
+                        @* <input class="form-control" v-model="filter" placeholder="搜尋日期" v-on:keyup.enter="filterDTO" /> *@
+                        <input type="date" class="inputDate" v-model="filterStart" />
+                        <input type="date" class="inputDate" v-model=" filterEnd" />
+                        <button type="button" class="btn tableDorne-btn" @@click="filterDTO">篩選</button>
+                        <button type="button" class="btn tableDorne-btn" @@click="showDTO">取消篩選</button>
+                    </div>
+                </div>
+            </div>
+            @* 表格 *@
+            <div class="row">
+                <table class="table table-striped table-hover text-center">
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <td>編號</td>
+                            <td>分享會員</td>
+                            <td>行程名稱</td>
+                            <td>開始時間</td>
+                            <td>結束時間</td>
+                            <td>點擊次數</td>
+                            <td>喜歡次數</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="adDTO in adArray">
+                            <td v-if="adDTO.state != null ">
+                                <label class="btn tableDorne-btn">{{adDTO.state}}</label>
+                            </td>
+                            <td v-else></td>
+                            <td><label>{{adDTO.adId}}</label></td>
+                            <td><label>{{adDTO.userName}}</label></td>
+                            <td><label>{{adDTO.tripName}}</label></td>
+                            <td><label>{{adDTO.startTime}}</label></td>
+                            <td><label>{{adDTO.endTime}}</label></td>
+                            <td><label>{{adDTO.clicks}}</label></td>
+                            <td><label>{{adDTO.adLoved}}</label></td>
+                            <td>
+                                <button type="button" class="btn tableDorne-btn" @@click="editModal(adDTO.adId)">編輯</button>
+                                <button type="button" class="btn tableDorne-btn" @@click="delAD(adDTO.adId)">刪除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @****** Contact Area End ******@
+    @*新增*@
+    <div class="modal fade" id="modalModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <template v-if="edit">
+                        <h5 class="modal-title">編輯分享</h5>
+                    </template>
+                    <template v-else>
+                        <h5 class="modal-title">新增分享</h5>
+                    </template>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="mb-3">
+                            <label class="form-label">分享會員:</label>
+                            <select class="form-control" v-model="modalUser" @@change="filterUser">
+                                <option v-for="user in UserArray" v-bind:value="user.memberId">{{user.userName}}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">行程名稱:</label>
+                            <select class="form-control" v-model="modalTripId">
+                                <option v-for="modal in tripArray" v-bind:value="modal.tripId">{{modal.tripName}}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">簡介:</label>
+                            <input type="text" class="form-control" v-model="modalDetail" />
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-6">
+                                <label class="form-label">開始時間:</label>
+                                <input type="date" class="form-control" v-model="modalStartTime" v-on:change="dateChange" />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">結束時間:</label>
+                                <input type="date" class="form-control" v-model="modalEndTime" v-on:change="dateChange" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">宣傳圖片:</label>
+                            <input type="text" class="form-control" v-model="modalImg" placeholder="請輸入圖片網址" v-on:change="isImg" />
+                        </div>
+                        <div class="mb-3 text-center" v-if="imgShow">
+                            <img :src="imgShow" alt="" class="modalImg">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" @@click="insert">新增</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @* Vue *@
+    <script src="https://unpkg.com/vue@3.4.25/dist/vue.global.js"></script>
+    @* ajax *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        var baseAddress = "https://localhost:7238";
+        var vueApp = {
+            data() {
+                return {
+
+                    filterStart: null,
+                    filterEnd: null,
+
+                    adArray: [],
+                    UserArray: [],
+                    tripArray: [],
+
+                    edit: false,
+
+                    modalUser: "",
+                    modalTripId: "",
+                    modalDetail: "",
+                    modalStartTime: null,
+                    modalEndTime: null,
+                    modalImg: "",
+                    imgShow: "",
+                }
+            },
+            methods: {
+                filterDTO: function () {
+
+                    let _this = this;
+                    var myAD = {};
+
+                    myAD.startTime = _this.filterStart;
+                    myAD.endTime = _this.filterEnd;
+
+                    if (myAD.startTime == null || myAD.endTime == null) {
+                        alert("請選擇搜尋日期")
+                    }
+                    else if (myAD.startTime >= myAD.endTime) {
+                        alert("開始日期必須小於結束日期")
+                    }
+                    else {
+                        axios.post(`${baseAddress}/api/Advertisements/Fliter`, myAD)
+                            .then(response => {
+
+                                _this.adArray = response.data;
+                                for (var i = 0; i < _this.adArray.length; i++) {
+                                    var time = _this.adArray[i].startTime;
+                                    _this.adArray[i].startTime = _this.adArray[i].startTime.split('T')[0];
+                                    _this.adArray[i].endTime = _this.adArray[i].endTime.split('T')[0];
+
+                                    var today = new Date();
+                                    var start = new Date(_this.adArray[i].startTime);
+                                    var end = new Date(_this.adArray[i].endTime);
+
+                                    if (today > start && today < end) {
+
+                                        _this.adArray[i].state = "分享中";
+                                    }
+                                }
+                            })
+                            .catch(err => {
+                                alert(err);
+                            });
+                    }
+                },
+                filterUser: function () {
+                    let _this = this;
+                    _this.tripArray = [];
+                    for (let item of _this.adArray) {
+                        if (item.memberId == _this.modalUser) {
+                            _this.tripArray.push(item);
+                        }
+                    }
+                },
+                update: function (adDTO) {
+                    var _this = this;
+                    var myAD = {
+                        adId: adDTO.adId,
+                        tripName: adDTO.tripName,
+                        startTime: adDTO.startTime,
+                        endTime: adDTO.endTime,
+                    };
+                    axios.put(`${baseAddress}/api/Advertisements/${adDTO.adId}`, myAD)
+                        .then(response => {
+                            alert(response.data);
+                            _this.showDTO();
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                },
+                cancel: function (adId) {
+
+                    let _this = this;
+                    for (var i = 0; i < _this.adArray.length; i++) {
+                        var item = _this.adArray[i];
+                        if (item.edit == true && adId == item.adId) {
+                            item.edit = false;
+                            for (var n = 0; n < _this.adArrayOld.length; n++) {
+                                var itemOld = _this.adArrayOld[n];
+                                if (adId == itemOld.idOld) {
+                                    item.tripId = itemOld.tripIdOld;
+                                    item.startTime = itemOld.startTimeOld;
+                                    item.endTime = itemOld.endTimeOld;
+                                    item.clicks = itemOld.clicksOld;
+                                    item.adLoved = itemOld.adLovedOld;
+                                }
+                            }
+                        }
+                    }
+                },
+                editModal: function (adId) {
+                    let _this = this;
+                    _this.edit = true;
+                    _this.clearModal();
+                    axios.get(`${baseAddress}/api/Active/User`)
+                        .then(response => {
+                            _this.UserArray = response.data;
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                    for (var i = 0; i < _this.adArray.length; i++) {
+                        var item = _this.adArray[i];
+                        if (adId == item.adId) {
+                            _this.modalUser = item.memberId;
+                            _this.filterUser();
+                            _this.modalTripId = item.tripId;
+                            _this.modalDetail = item.detail;
+                            _this.modalStartTime = item.startTime;
+                            _this.modalEndTime = item.endTime;
+                            _this.modalImg = item.image;
+                            _this.imgShow = item.image;
+
+                        }
+                    }
+                    
+                    axios.post(`${baseAddress}/api/Advertisements/Trip?memberId=${_this.modalUser}`)
+                        .then(response => {
+                            _this.tripArray = response.data;
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+
+                    $("#modalModal").modal("show");
+                },
+                delAD: function (adid) {
+                    let _this = this;
+                    var ret = confirm(`確定刪除編號${adid}的資料?`)
+                    if (ret == true) {
+                        axios.delete(`${baseAddress}/api/Advertisements/${adid}`)
+                            .then(response => {
+                                alert(response.data);
+                                _this.showDTO();
+                            })
+                            .catch(err => {
+                                alert(err);
+                            });
+
+                    }
+                },
+                insertModal: function () {
+                    let _this = this;
+                    _this.edit = false;
+                    _this.clearModal();
+                    axios.get(`${baseAddress}/api/Active/User`)
+                        .then(response => {
+                            _this.UserArray = response.data;
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                    $("#modalModal").modal("show");
+                },
+                insert: function () {
+                    var _this = this;
+                    var myAD = {
+                        adId: -1,
+                        tripId: _this.modalTripId,
+                        startTime: _this.modalStartTime,
+                        endTime: _this.modalEndTime,
+                        image: _this.modalImg,
+                        detail: _this.modalDetail,
+                        memberId: _this.modalUser,
+
+                    };
+                    axios.post(`${baseAddress}/api/Advertisements`, myAD)
+                        .then(response => {
+                            alert(response.data);
+                            if (response.data == "新增成功") {
+                                $("#modalModal").modal("hide");
+                                _this.showDTO();
+                            }
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+
+                },
+                dateChange: function () {
+                    let _this = this;
+                    var start = _this.modalStartTime;
+                    var end = _this.modalEndTime;
+                    if (start != null && end != null) {
+                        if (start >= end) {
+                            alert("開始時間必須小於結束時間");
+                        }
+                    }
+                },
+                showDTO: function () {
+                    let _this = this;
+
+                    axios.get(`${baseAddress}/api/Advertisements`)
+                        .then(response => {
+
+                            _this.adArray = response.data;
+
+                            for (var i = 0; i < _this.adArray.length; i++) {
+                                _this.adArray[i].startTime = _this.adArray[i].startTime.split('T')[0];
+                                _this.adArray[i].endTime = _this.adArray[i].endTime.split('T')[0];
+
+                                var today = new Date();
+                                var start = new Date(_this.adArray[i].startTime);
+                                var end = new Date(_this.adArray[i].endTime);
+
+                                if (today > start && today < end) {
+
+                                    _this.adArray[i].state = "分享中";
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            alert(err);
+                        });
+                    
+                },
+                isImg: function () {
+                    _this = this;
+                    const img = new Image();
+                    img.onload = function () {
+                        _this.imgShow = _this.modalImg;
+                    };
+                    img.onerror = function () {
+                        _this.imgShow = "";
+                    }
+                    img.src = _this.modalImg;
+                },
+                clearModal: function () {
+                    let _this = this;
+
+                    _this.modalTripId = "";
+                    _this.modalStartTime = null;
+                    _this.modalEndTime = null;
+                    _this.modalImg = "";
+                    _this.modalDetail = "";
+                    _this.modalUser = "";
+                    _this.imgShow = "";
+                },
+            },
+            mounted: function () {
+                let _this = this;
+                _this.showDTO();
+            }
+        }
+        var app = Vue.createApp(vueApp).mount("#appAD");
+
+    </script>
+
+}

@@ -1,0 +1,31 @@
+﻿@section Styles {
+    <link href="~/dist/main.css" rel="stylesheet" />
+    <style>
+        .dorne-features-destinations-area{
+            padding: 35px 35px;
+        }
+    </style>
+}
+
+
+@****** Breadcumb Area Start ******@
+<div class="breadcumb-area bg-img bg-overlay" style="background-image: url(/relax/img/bg-img/hero-1.jpg)">
+</div>
+<div class="dorne-features-destinations-area" id="contact">
+    <div class="container-fluid" style="width:75%">
+        <div class="row">
+            <div class="col-12">
+                <!--chart-->
+                <div id="root"></div>
+                <!--chart end-->
+            </div>
+        </div>
+    </div>
+</div>
+@****** Breadcumb Area End ******@
+
+@section Scripts {
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="~/dist/bundle.js"></script>
+}
